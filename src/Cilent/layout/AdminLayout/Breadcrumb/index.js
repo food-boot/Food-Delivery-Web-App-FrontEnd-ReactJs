@@ -22,6 +22,7 @@ class Breadcrumb extends Component {
                     <Nav className="mr-auto">
                         <Nav.Link ><Link to="/dashboard">Dashboard</Link></Nav.Link>
                         <Nav.Link ><Link to="/form">Form</Link></Nav.Link>
+                        <Nav.Link ><Link to="/dashboard">charts</Link></Nav.Link>
                         <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
                             <NavDropdown.Item href="/form">Action</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>

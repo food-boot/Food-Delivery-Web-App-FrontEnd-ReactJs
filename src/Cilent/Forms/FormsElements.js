@@ -9,7 +9,7 @@ class FormsElements extends React.Component {
 
         return (
 
-            <Row>
+            <Row className="justify-content-md-center">
                 <Col md={11}>
                     <Card>
                         <Card.Header>
