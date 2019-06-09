@@ -5,6 +5,21 @@ import '../../../assets/scss/style.scss';
 
 
 class SignUp extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            email: '',
+            password: '',
+        };
+    }
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    onSubmit = () => {
+        alert(this.state.email)
+        alert(this.state.password)
+    }
     render() {
         return (
 
@@ -22,20 +37,16 @@ class SignUp extends React.Component {
                                 <i className="feather icon-unlock auth-icon" />
                             </div>
                             <h3 className="mb-4">Login</h3>
-                            <div className="input-group mb-3">
-                                <input type="email" className="form-control" placeholder="Email" />
-                            </div>
-                            <div className="input-group mb-4">
-                                <input type="password" className="form-control" placeholder="password" />
-                            </div>
-                            <div className="form-group text-left">
-                                <div className="checkbox checkbox-fill d-inline">
-                                    <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" />
-                                    <label htmlFor="checkbox-fill-a1" className="cr"> Save credentials</label>
+                            <form onSubmit={this.onSubmit}>
+                                <div className="input-group mb-3">
+                                    <input type="email" name="email" className="form-control" placeholder="Email" onChange={this.onChange} required />
                                 </div>
-                            </div>
-                            <button className="btn btn-primary shadow-2 mb-4">Login</button>                            
-                            <p className="mb-0 text-muted">Don’t have an account? <NavLink to="/signUp">Signup</NavLink></p>
+                                <div className="input-group mb-4">
+                                    <input type="password" name="password" className="form-control" placeholder="password" onChange={this.onChange} required />
+                                </div>                                
+                                <button className="btn btn-primary shadow-2 mb-4">Login</button>
+                                <p className="mb-0 text-muted">Don’t have an account? <NavLink to="/signUp">Signup</NavLink></p>
+                            </form>
                         </div>
                     </div>
                 </div>
