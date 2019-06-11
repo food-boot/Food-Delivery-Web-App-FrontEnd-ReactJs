@@ -2,26 +2,35 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
-
+import axios from "axios";
 class SignUp extends React.Component {
     constructor() {
         super();
         this.state = {
             email: '',
             password: '',
-            firstName:'',
-            lastName:''
+            firstName: '',
+            lastName: ''
         };
     }
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    onSubmit = () => {
-        alert(this.state.email)
-        alert(this.state.password)
-        alert(this.state.firstName)
-        alert(this.state.lastName)
+    onSubmit = () => {        
+
+        const user = {
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            email: this.state.email,
+            password: this.state.password
+        };
+        axios.post(`http://localhost:8080/users`, { user })
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+            })
+
     }
     render() {
         return (
@@ -55,7 +64,7 @@ class SignUp extends React.Component {
                                 </div>
                                 <div className="form-group text-left">
                                 </div>
-                                <button className="btn btn-primary shadow-2 mb-4" ><NavLink to="/signUp">Sign Up</NavLink></button>
+                                <button className="btn btn-primary shadow-2 mb-4" onClick={() => this.onSubmit()}><NavLink to="/signUp">Sign Up</NavLink></button>
                                 <p className="mb-0 text-muted">Allready have an account? <NavLink to="/signIn">Sign In</NavLink></p>
                             </form>
                         </div>
