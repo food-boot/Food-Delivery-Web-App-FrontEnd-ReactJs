@@ -2,8 +2,36 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
-
+import axios from "axios";
 class SignUp extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: ''
+        };
+    }
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+    onSubmit = () => {        
+
+        const user = {
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            email: this.state.email,
+            password: this.state.password
+        };
+        axios.post(`http://localhost:8080/users`, { user })
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+            })
+
+    }
     render() {
         return (
 
@@ -20,20 +48,25 @@ class SignUp extends React.Component {
                             <div className="mb-4">
                                 <i className="feather icon-user-plus auth-icon" />
                             </div>
-                            <h3 className="mb-4">Sign up</h3>
-                            <div className="input-group mb-3">
-                                <input type="text" className="form-control" placeholder="Username" />
-                            </div>
-                            <div className="input-group mb-3">
-                                <input type="email" className="form-control" placeholder="Email" />
-                            </div>
-                            <div className="input-group mb-4">
-                                <input type="password" className="form-control" placeholder="password" />
-                            </div>
-                            <div className="form-group text-left">                                
-                            </div>
-                            <button className="btn btn-primary shadow-2 mb-4" ><NavLink to="/signUp">Sign Up</NavLink></button>
-                            <p className="mb-0 text-muted">Allready have an account? <NavLink to="/signIn">Sign In</NavLink></p>
+                            <form onSubmit={this.onSubmit}>
+                                <h3 className="mb-4">Sign up</h3>
+                                <div className="input-group mb-3">
+                                    <input type="text" name="firstName" className="form-control" placeholder="First Name" onChange={this.onChange} required />
+                                </div>
+                                <div className="input-group mb-3">
+                                    <input type="text" name="lastName" className="form-control" placeholder="Last Name" onChange={this.onChange} required />
+                                </div>
+                                <div className="input-group mb-3">
+                                    <input type="email" name="email" className="form-control" placeholder="Email" onChange={this.onChange} required />
+                                </div>
+                                <div className="input-group mb-4">
+                                    <input type="password" name="password" className="form-control" placeholder="password" onChange={this.onChange} required />
+                                </div>
+                                <div className="form-group text-left">
+                                </div>
+                                <button className="btn btn-primary shadow-2 mb-4" onClick={() => this.onSubmit()}><NavLink to="/signUp">Sign Up</NavLink></button>
+                                <p className="mb-0 text-muted">Allready have an account? <NavLink to="/signIn">Sign In</NavLink></p>
+                            </form>
                         </div>
                     </div>
                 </div>
