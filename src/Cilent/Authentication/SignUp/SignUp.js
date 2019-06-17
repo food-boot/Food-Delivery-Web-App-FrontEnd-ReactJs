@@ -25,11 +25,11 @@ class SignUp extends React.Component {
             email: this.state.email,
             password: this.state.password
         };
-        axios.post(`http://localhost:8080/users`, { user })
+        axios.post(`http://localhost:8080/users`, user)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
-            })
+            }).catch(err => console.log(err.message))
 
     }
     render() {
