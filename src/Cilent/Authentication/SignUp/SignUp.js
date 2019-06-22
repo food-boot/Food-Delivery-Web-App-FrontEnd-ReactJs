@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink , Redirect} from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
 import axios from "axios";
@@ -13,11 +13,26 @@ class SignUp extends React.Component {
             lastName: ''
         };
     }
+
+    componentDidMount = () => {
+        try {
+            var data = localStorage.getItem('data');
+            if (data == null) {
+              this.setState({
+                auth: false
+              })
+            } else {
+                this.props.history.push('/dashboard')
+            }
+          } catch{
+          //   this.props.history.push('/signIn')
+          }
+    }
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
-    onSubmit = () => {        
+    onSubmit = () => {
 
         const user = {
             firstName: this.state.firstName,
@@ -25,11 +40,37 @@ class SignUp extends React.Component {
             email: this.state.email,
             password: this.state.password
         };
+     console.log(user);
+
         axios.post(`http://localhost:8080/users`, user)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
-            }).catch(err => console.log(err.message))
+                if (res.status == 200) {
+                    localStorage.setItem('data', res.data.userId);
+                    this.props.history.push({
+                        pathname: '/dashboard' 
+                    });
+                    
+                } else{
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+                
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+                if (error.response.status == 500) {
+                    alert("User Already Exsists")
+                    this.setState({ fireRedirect: true })
+                } 
+            })
+
+           
+
 
     }
     render() {
