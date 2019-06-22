@@ -25,7 +25,8 @@ class SignUp extends React.Component {
             email: this.state.email,
             password: this.state.password
         };
-        console.log(user);
+     console.log(user);
+
         axios.post(`http://localhost:8080/users`, user)
             .then(res => {
                 console.log(res);
@@ -52,6 +53,9 @@ class SignUp extends React.Component {
                     this.setState({ fireRedirect: true })
                 } 
             })
+
+           
+
 
     }
     render() {
