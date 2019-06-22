@@ -18,6 +18,20 @@ class Dashboard extends React.Component {
         }
        
     }
+
+    componentDidUpdate = () => {
+        try{
+            var data = localStorage.getItem('data');
+            if(data == null){
+                this.props.history.push('/signIn')
+            }else{
+                console.log(data)
+            }
+        }catch{
+            this.props.history.push('/signIn')
+        }
+       
+    }
     render() {
         const tabContent = (
             <div>

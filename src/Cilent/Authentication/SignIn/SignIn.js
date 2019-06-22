@@ -12,6 +12,21 @@ class SignUp extends React.Component {
             password: '',
         };
     }
+    componentDidMount = () => {
+        try {
+            var data = localStorage.getItem('data');
+            if (data == null) {
+              this.setState({
+                auth: false
+              })
+            } else {
+                this.props.history.push('/dashboard')
+            }
+          } catch{
+          //   this.props.history.push('/signIn')
+          }
+    }
+    
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
