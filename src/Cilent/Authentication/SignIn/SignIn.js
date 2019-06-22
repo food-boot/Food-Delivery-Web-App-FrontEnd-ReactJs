@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
 
-
+import axios from "axios";
 class SignUp extends React.Component {
     constructor() {
         super();
@@ -26,14 +26,45 @@ class SignUp extends React.Component {
           //   this.props.history.push('/signIn')
           }
     }
-    
+
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     }
 
     onSubmit = () => {
-        alert(this.state.email)
-        alert(this.state.password)
+
+        const user = {
+            email: this.state.email,
+            password: this.state.password,
+            
+        };
+        axios.post(`http://localhost:8080/users/login`, user)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    localStorage.setItem('data', res.data.userId);
+                    this.props.history.push({
+                        pathname: '/dashboard' 
+                    });
+                    
+                } else{
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+                
+            })
+            .catch(error => {
+                alert(error.response)
+                console.log(error.response)
+                if (error.response.status == 500) {
+                    alert("User Already Exsists")
+                    this.setState({ fireRedirect: true })
+                } 
+            })
+
     }
     render() {
         return (
