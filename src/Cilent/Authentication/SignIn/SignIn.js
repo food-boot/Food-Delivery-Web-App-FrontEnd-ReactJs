@@ -43,6 +43,7 @@ class SignUp extends React.Component {
                 console.log(res);
                 console.log(res.data);
                 if (res.status == 200) {
+                    // alert("hii")
                     localStorage.setItem('data', res.data.userId);
                     this.props.history.push({
                         pathname: '/dashboard' 

@@ -10,6 +10,12 @@ import Charts from "./Cilent/Charts/Nvd3Chart/index"
 import Cart from "./Cilent/Cart/Carts"
 import Nav from "./Cilent/layout/AdminLayout/Breadcrumb"
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      auth: true,
+    };
+  }
   componentDidMount = () => {
     setTimeout(() => {
       try {
@@ -33,7 +39,7 @@ class App extends Component {
     return (
       <Router>
         <div className="App">
-          
+          <Nav />
           <br /><br />
           <Route path="/cart" component={Cart} />
           <Route exact path="/signIn" component={SignIn} />
