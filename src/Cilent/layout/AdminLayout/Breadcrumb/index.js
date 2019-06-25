@@ -19,10 +19,12 @@ class Breadcrumb extends Component {
         setTimeout(() => {
             try {
               var data = localStorage.getItem('data');
-              if (data == null) {
+              console.log(data)
+              if (data == 'user') {
                 this.setState({
                   auth: false
                 })
+                // var data = localStorage.getItem('data');
               } else {
                 this.setState({
                   auth: true
