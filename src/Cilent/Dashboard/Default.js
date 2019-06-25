@@ -4,6 +4,34 @@ import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
 import Nav from "../layout/AdminLayout/Breadcrumb/index";
 
 class Dashboard extends React.Component {
+
+    componentDidMount = () => {
+        try{
+            var data = localStorage.getItem('data');
+            if(data == null){
+                this.props.history.push('/signIn')
+            }else{
+                console.log(data)
+            }
+        }catch{
+            this.props.history.push('/signIn')
+        }
+       
+    }
+
+    componentDidUpdate = () => {
+        try{
+            var data = localStorage.getItem('data');
+            if(data == null){
+                this.props.history.push('/signIn')
+            }else{
+                console.log(data)
+            }
+        }catch{
+            this.props.history.push('/signIn')
+        }
+       
+    }
     render() {
         const tabContent = (
             <div>
