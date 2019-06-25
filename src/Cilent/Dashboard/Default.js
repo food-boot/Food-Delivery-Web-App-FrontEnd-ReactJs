@@ -8,10 +8,15 @@ class Dashboard extends React.Component {
     componentDidMount = () => {
         try{
             var data = localStorage.getItem('data');
+            var type = localStorage.getItem('type');
             if(data == null){
                 this.props.history.push('/signIn')
             }else{
                 console.log(data)
+            }
+
+            if(type == 'user'){
+                this.props.history.push('/cart')
             }
         }catch{
             this.props.history.push('/signIn')
@@ -94,7 +99,8 @@ class Dashboard extends React.Component {
         );
 
         return (
-            <Row className="justify-content-md-center">               
+            <Row className="justify-content-md-center">  
+            <Nav />             
                 <Col md={10} className="justify-content-md-center">
                     <Row className="justify-content-md-center">
                         <Col md={6} xl={4}>
