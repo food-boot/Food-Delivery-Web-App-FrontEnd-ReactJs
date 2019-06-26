@@ -267,11 +267,7 @@ header {
   display: -webkit-flex;
   align-items: center;
   -webkit-align-items: center;
-  padding: 8px;
-  .product-image {
-    width: 48px;
-    height: 48px;
-  }
+  padding: 8px;  
   .product-info {
     margin-left: 16px;
     flex-grow: 1;
@@ -283,7 +279,7 @@ header {
       color: $gray-light;
       font-weight: 700;
       &:before {
-        content: "₹ ";
+        content: "LKR ";
       }
     }
   }
@@ -299,7 +295,7 @@ header {
       font-weight: 700;
       text-align: right;
       &:before {
-        content: "₹ ";
+        content: "LKR ";
       }
     }
   }

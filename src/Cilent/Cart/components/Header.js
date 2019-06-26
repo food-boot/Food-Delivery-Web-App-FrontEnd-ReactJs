@@ -4,7 +4,7 @@ import Counter from "./Counter";
 import EmptyCart from "../empty-states/EmptyCart";
 import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 import { findDOMNode } from "react-dom";
-
+import axios from "axios";
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -13,6 +13,56 @@ class Header extends Component {
       cart: this.props.cartItems,
       mobileSearch: false
     };
+  }
+
+  submit = () => {
+    console.log(this.state.cart)
+    var cart = this.state.cart
+    var item = []
+    var cost = 0;
+    cart.forEach(element => {
+      item.push(
+        element.name
+      )
+      cost = cost + element.price * element.quantity
+    });
+    var data = localStorage.getItem('data');
+    console.log(item)
+    console.log(cost)
+    console.log(data)
+
+    var order = {
+      cost: cost,
+      items: item,
+      userId: data
+    }
+
+    var config = {
+      headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+    };
+    axios.post(`http://localhost:8080/orders`, order, config)
+      .then(res => {
+        console.log(res);
+        console.log(res.data);
+        if (res.status == 200) {
+          this.props.history.push({
+            pathname: '/cart'
+          });
+
+        } else {
+          alert("fails")
+          this.setState({
+            errors: res.data.status
+          });
+        }
+
+      })
+      .catch(error => {
+        // alert(error.response)
+        console.log(error.response)
+        
+      })
+      window.location.reload()
   }
   handleCart(e) {
     e.preventDefault();
@@ -35,7 +85,7 @@ class Header extends Component {
       {
         mobileSearch: false
       },
-      function() {
+      function () {
         this.refs.searchBox.value = "";
         this.props.handleMobileSearch();
       }
@@ -72,7 +122,7 @@ class Header extends Component {
     cartItems = this.state.cart.map(product => {
       return (
         <li className="cart-item" key={product.name}>
-          <img className="product-image" src={product.image} />
+          {/* <img className="product-image" src={product.image} /> */}
           <div className="product-info">
             <p className="product-name">{product.name}</p>
             <p className="product-price">{product.price}</p>
@@ -198,8 +248,8 @@ class Header extends Component {
               {this.props.totalItems ? (
                 <span className="cart-count">{this.props.totalItems}</span>
               ) : (
-                ""
-              )}
+                  ""
+                )}
             </a>
             <div
               className={
@@ -212,6 +262,7 @@ class Header extends Component {
                 <button
                   type="button"
                   className={this.state.cart.length > 0 ? " " : "disabled"}
+                  onClick={this.submit}
                 >
                   PROCEED TO CHECKOUT
                 </button>
