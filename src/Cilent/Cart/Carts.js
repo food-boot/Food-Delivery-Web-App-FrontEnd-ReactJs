@@ -180,7 +180,7 @@ class Carts extends Component {
           updateQuantity={this.updateQuantity}
           openModal={this.openModal}
         />
-        <Footer />
+        {/* <Footer /> */}
         <QuickView
           product={this.state.quickViewProduct}
           openModal={this.state.modalActive}
