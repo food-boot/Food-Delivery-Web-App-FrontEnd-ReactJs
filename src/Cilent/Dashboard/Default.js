@@ -12,8 +12,14 @@ class Dashboard extends React.Component {
             category: '',
             price: '',
             foodName: '',
-            foods: []
+            foods: [],
+            userCount: 0,
+            oCount: 0,
+            fCount: 0,
+            orders: []
         };
+        this.onDeleteO = this.onDeleteO.bind(this)
+
     }
     componentDidMount = () => {
         try {
@@ -75,18 +81,121 @@ class Dashboard extends React.Component {
             .catch(error => {
                 // alert(error.response)
                 console.log(error.response)
-                if (error.response.status == 500) {
-                    alert("Error while getting data")
-                    this.setState({ fireRedirect: true })
-                }
+
             })
         console.log(this.state.foods)
+
+        axios.get(`http://localhost:8080/users`, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                var count = 0
+                if (res.status == 200) {
+                    var data = res.data
+                    data.forEach(element => {
+                        if (element.user_type != "admin") {
+                            count = count + 1;
+                        }
+                    });
+                    this.setState({
+                        userCount: count
+                    })
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+        axios.get(`http://localhost:8080/orders`, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                var fCount = 0
+                var oCount = 0
+                if (res.status == 200) {
+                    var data = res.data
+                    var order = this.state.orders
+                    data.forEach(element => {
+                        if (element.status == true) {
+                            fCount = fCount + 1;
+                        } else {
+                            oCount = oCount + 1;
+                        }
+                        var item = " ";
+                        for (var i = 0; i < element.items.length; i++) {
+                            item = item + element.items[i] + ", "
+                        }
+                        order.push({
+                            cost: element.cost,
+                            orderId: element.orderId,
+                            items: item,
+                            status: element.status
+                        })
+                    });
+                    this.setState({
+                        fCount: fCount,
+                        oCount: oCount
+                    })
+
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+        console.log(this.state.orders)
 
     }
 
 
     onChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
+    }
+
+    onDeleteO = (id) => {
+        var config = {
+            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        };
+        axios.delete(`http://localhost:8080/orders/` + id, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    window.location.reload()
+
+                } else {
+
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+
     }
 
     onSubmit = () => {
@@ -127,6 +236,34 @@ class Dashboard extends React.Component {
         console.log(food);
         window.location.reload()
     }
+    onDeleteO = (id) => {
+        var config = {
+            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        };
+        axios.delete(`http://localhost:8080/orders/` + id, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    window.location.reload()
+
+                } else {
+
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+
+    }
     render() {
         return (
             <Row className="justify-content-md-center">
@@ -141,7 +278,7 @@ class Dashboard extends React.Component {
                                 <Card.Body>
                                     <div className="row d-flex align-items-center">
                                         <div className="col-12">
-                                            <h3 className="align-items-center">249</h3>
+                                            <h3 className="align-items-center">{this.state.userCount}</h3>
                                         </div>
                                     </div>
 
@@ -156,7 +293,7 @@ class Dashboard extends React.Component {
                                 <Card.Body>
                                     <div className="row d-flex align-items-center">
                                         <div className="col-12">
-                                            <h3 className="align-items-center">10</h3>
+                                            <h3 className="align-items-center">{this.state.oCount}</h3>
                                         </div>
                                     </div>
 
@@ -171,13 +308,14 @@ class Dashboard extends React.Component {
                                 <Card.Body>
                                     <div className="row d-flex align-items-center">
                                         <div className="col-12">
-                                            <h3 className="align-items-center">5</h3>
+                                            <h3 className="align-items-center">{this.state.fCount}</h3>
                                         </div>
                                     </div>
 
                                 </Card.Body>
                             </Card>
                         </Col>
+
                         <Col md={12} xl={12}>
                             <Tabs defaultActiveKey="new" id="uncontrolled-tab-example">
                                 <Tab eventKey="new" title="New Orders">
@@ -189,17 +327,58 @@ class Dashboard extends React.Component {
 
                                             <Table responsive hover>
                                                 <tbody>
-                                                    <tr className="unread">
-                                                        <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                        <td>
-                                                            <h6 className="mb-1">Isabella Christensen</h6>
-                                                            <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                        </td>
-                                                        <td>
-                                                            <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                                        </td>
-                                                        <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                                    </tr>
+                                                    {this.state.orders.map(function (item, i) {
+
+
+                                                        if (item.status == false) {
+
+                                                            return (
+                                                                <tr key={i} className="unread">
+                                                                    <td>
+                                                                        <h6 className="mb-1">{item.items}</h6>
+                                                                        <p className="m-0">{item.orderId}</p>
+                                                                    </td>
+                                                                    <td>
+                                                                        <h6 className="text-muted">
+                                                                            <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
+                                                                        </h6>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button className="label theme-bg2 text-white f-12" onClick={() => {
+                                                                            const config = {
+                                                                                headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+                                                                            };
+                                                                            const url = "http://localhost:8080/orders/" + item.orderId
+                                                                            axios.delete(url,config)
+                                                                                .then(res => {
+                                                                                    console.log(res);
+                                                                                    console.log(res.data);
+                                                                                    if (res.status == 200) {
+                                                                                        window.location.reload()
+
+                                                                                    } else {
+
+                                                                                        alert("fails")
+                                                                                        this.setState({
+                                                                                            errors: res.data.status
+                                                                                        });
+                                                                                    }
+
+                                                                                })
+                                                                                .catch(error => {
+                                                                                    // alert(error.response)
+                                                                                    console.log(error.response)
+
+                                                                                })
+                                                                        }}>Reject</button>
+                                                                        <button className="label theme-bg text-white f-12" onClick={() => this.onApprove(item.orderId)}>Approve</button></td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                    })
+                                                    }
+
 
                                                 </tbody>
                                             </Table>
@@ -215,39 +394,55 @@ class Dashboard extends React.Component {
 
                                             <Table responsive hover>
                                                 <tbody>
-                                                    <tr className="unread">
-                                                        <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                        <td>
-                                                            <h6 className="mb-1">Isabella Christensen</h6>
-                                                            <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                        </td>
-                                                        <td>
-                                                            <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                                        </td>
-                                                        <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                                    </tr>
-                                                    <tr className="unread">
-                                                        <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                        <td>
-                                                            <h6 className="mb-1">Isabella Christensen</h6>
-                                                            <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                        </td>
-                                                        <td>
-                                                            <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                                        </td>
-                                                        <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                                    </tr>
-                                                    <tr className="unread">
-                                                        <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                        <td>
-                                                            <h6 className="mb-1">Isabella Christensen</h6>
-                                                            <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                        </td>
-                                                        <td>
-                                                            <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                                        </td>
-                                                        <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                                    </tr>
+                                                    {this.state.orders.map(function (item, i) {
+                                                        if (item.status == true) {
+                                                            return (
+                                                                <tr key={i} className="unread">
+                                                                    <td>
+                                                                        <h6 className="mb-1">{item.items}  </h6>
+                                                                        <p className="m-0">{item.orderId}</p>
+                                                                    </td>
+                                                                    <td>
+                                                                        <h6 className="text-muted">
+                                                                            <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
+                                                                        </h6>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button onClick={() => {
+                                                                            const config = {
+                                                                                headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+                                                                            };
+                                                                            axios.delete("http://localhost:8080/orders/" + item.orderId, {headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }})
+                                                                                .then(res => {
+                                                                                    console.log(res);
+                                                                                    console.log(res.data);
+                                                                                    if (res.status == 200) {
+                                                                                        window.location.reload()
+
+                                                                                    } else {
+
+                                                                                        alert("fails")
+                                                                                        this.setState({
+                                                                                            errors: res.data.status
+                                                                                        });
+                                                                                    }
+
+                                                                                })
+                                                                                .catch(error => {
+                                                                                    // alert(error.response)
+                                                                                    console.log(error.response)
+
+                                                                                })
+                                                                        }} className="label theme-bg2 text-white f-12" >Delete</button>
+
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                    })
+                                                    }
+
 
                                                 </tbody>
                                             </Table>
