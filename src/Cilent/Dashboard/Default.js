@@ -12,6 +12,7 @@ class Dashboard extends React.Component {
             category: '',
             price: '',
             foodName: '',
+            foods: []
         };
     }
     componentDidMount = () => {
@@ -33,7 +34,7 @@ class Dashboard extends React.Component {
 
     }
 
-    componentDidUpdate = () => {
+    componentWillMount = () => {
         try {
             var data = localStorage.getItem('data');
             if (data == null) {
@@ -47,12 +48,23 @@ class Dashboard extends React.Component {
         var config = {
             headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         };
-        axios.get(`http://localhost:8080/foods/4bA4qWzI4saEYTcdqJBLCJOV9dlgli`, config)
+
+        axios.get(`http://localhost:8080/foods`, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
                 if (res.status == 200) {
-                    alert("Su")
+                    var data = res.data
+                    var fd = this.state.foods
+                    data.forEach(element => {
+                        fd.push({
+                            foodId:element.foodId,
+                            foodName:element.foodName,
+                            foodPrice:element.foodPrice,
+                            foodCategory:element.foodCategory
+                        })
+                        
+                    });
 
                 } else {
                     alert("fails")
@@ -70,6 +82,7 @@ class Dashboard extends React.Component {
                     this.setState({ fireRedirect: true })
                 }
             })
+            console.log(this.state.foods)
 
 
 
@@ -366,17 +379,23 @@ class Dashboard extends React.Component {
                                 <Tab eventKey="breakfast" title="Breakfast">
                                     <Table responsive hover>
                                         <tbody>
-                                            <tr className="unread">
-                                                <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                <td>
-                                                    <h6 className="mb-1">Isabella Christensen</h6>
-                                                    <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                </td>
-                                                <td>
-                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                                </td>
-                                                <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                            </tr>
+                                            {this.state.foods.map(function (item, i) {
+                                                console.log(item);
+                                                return (
+                                                    <tr key={i} className="unread">                                                        
+                                                        <td>
+                                                            <h6 className="mb-1">{item.foodName}</h6>
+                                                            <p className="m-0">{item.foodName}</p>
+                                                        </td>
+                                                        <td>
+                                                            <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                        </td>
+                                                        <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
+                                                    </tr>
+                                                )
+                                            })
+                                            }
+
                                         </tbody>
                                     </Table>
                                 </Tab>

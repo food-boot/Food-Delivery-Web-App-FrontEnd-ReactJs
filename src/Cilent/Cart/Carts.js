@@ -36,9 +36,13 @@ class Carts extends Component {
   }
   // Fetch Initial Set of Products from external API
   getProducts() {
+      var config = {
+        headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+    };
     let url =
-      "https://res.cloudinary.com/sivadass/raw/upload/v1535817394/json/products.json";
-    axios.get(url).then(response => {
+      "http://localhost:8080/foods";
+    axios.get(url , config).then(response => {
+      console.log(response.data)
       this.setState({
         products: response.data
       });

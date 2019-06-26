@@ -10,11 +10,11 @@ class Product extends Component {
       isAdded: false
     };
   }
-  addToCart(image, name, price, id, quantity) {
+  addToCart(name, price, id, quantity) {
     this.setState(
       {
         selectedProduct: {
-          image: image,
+          // image: image,
           name: name,
           price: price,
           id: id,
@@ -39,11 +39,11 @@ class Product extends Component {
       }
     );
   }
-  quickView(image, name, price, id) {
+  quickView(name, price, id) {
     this.setState(
       {
         quickViewProdcut: {
-          image: image,
+          // image: image,
           name: name,
           price: price,
           id: id
@@ -55,27 +55,13 @@ class Product extends Component {
     );
   }
   render() {
-    let image = this.props.image;
+    // let image = this.props.image;
     let name = this.props.name;
     let price = this.props.price;
     let id = this.props.id;
     let quantity = this.props.productQuantity;
     return (
-      <div className="product">
-        <div className="product-image">
-          <img
-            src={image}
-            alt={this.props.name}
-            onClick={this.quickView.bind(
-              this,
-              image,
-              name,
-              price,
-              id,
-              quantity
-            )}
-          />
-        </div>
+      <div className="product">        
         <h4 className="product-name">{this.props.name}</h4>
         <p className="product-price">{this.props.price}</p>
         <Counter
@@ -88,8 +74,7 @@ class Product extends Component {
             className={!this.state.isAdded ? "" : "added"}
             type="button"
             onClick={this.addToCart.bind(
-              this,
-              image,
+              this,              
               name,
               price,
               id,
