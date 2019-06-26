@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
-import { NavDropdown, Navbar,Nav, } from 'react-bootstrap';
+import { NavDropdown, Navbar, Nav, } from 'react-bootstrap';
 
 
 class Breadcrumb extends Component {
@@ -12,39 +12,38 @@ class Breadcrumb extends Component {
     constructor() {
         super();
         this.state = {
-          auth: false
+            auth: false
         };
-      }
+    }
     componentDidMount = () => {
-        setTimeout(() => {
-            try {
-              var data = localStorage.getItem('data');
-              console.log(data)
-              if (data == 'user') {
+        try {
+            var data = localStorage.getItem('data');
+            console.log(data)
+            if (data == 'user') {
                 this.setState({
-                  auth: false
+                    auth: false
                 })
                 // var data = localStorage.getItem('data');
-              } else {
+            } else {
                 this.setState({
-                  auth: true
+                    auth: true
                 })
-              }
-            } catch{
-            //   this.props.history.push('/signIn')
             }
-          }, 4000);
+        } catch{
+            //   this.props.history.push('/signIn')
+        }
+
     }
 
     logout = () => {
         localStorage.removeItem('data');
         this.setState({
-            auth:false
+            auth: false
         })
     }
     render() {
 
-        if(this.state.auth == true){
+        if (this.state.auth == true) {
             return (
                 <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                     <Navbar.Brand href="#home">Foof Court</Navbar.Brand>
@@ -62,7 +61,7 @@ class Breadcrumb extends Component {
                                 <NavDropdown.Divider />
                                 <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
                             </NavDropdown>
-                            
+
                         </Nav>
                         <Nav>
                             <Nav.Link href="#deets">More deets</Nav.Link>
@@ -74,12 +73,12 @@ class Breadcrumb extends Component {
                     </Navbar.Collapse>
                 </Navbar>
             );
-        }else{
-            return(
-                <Redirect to="/signIn"/>
+        } else {
+            return (
+                <Redirect to="/signIn" />
             )
         }
-        
+
     }
 }
 
