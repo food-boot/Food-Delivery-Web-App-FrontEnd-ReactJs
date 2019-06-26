@@ -44,6 +44,34 @@ class Dashboard extends React.Component {
         } catch{
             this.props.history.push('/signIn')
         }
+        var config = {
+            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        };
+        axios.get(`http://localhost:8080/foods/4bA4qWzI4saEYTcdqJBLCJOV9dlgli`, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    alert("Su")
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+                if (error.response.status == 500) {
+                    alert("Error while getting data")
+                    this.setState({ fireRedirect: true })
+                }
+            })
+
+
 
     }
 
@@ -59,7 +87,7 @@ class Dashboard extends React.Component {
             foodCategory: this.state.category,
         };
         var config = {
-            headers: { 'Authorization': "bearer " + localStorage.getItem('data') }
+            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         };
 
         axios.post(`http://localhost:8080/foods`, food, config)
@@ -365,7 +393,7 @@ class Dashboard extends React.Component {
                                                     <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
                                                 </td>
                                                 <td><a className="label theme-bg2 text-white f-12">Reject</a>
-                                                <a className="label theme-bg text-white f-12">Approve</a></td>
+                                                    <a className="label theme-bg text-white f-12">Approve</a></td>
                                             </tr>
                                         </tbody>
                                     </Table>
@@ -383,7 +411,7 @@ class Dashboard extends React.Component {
                                                     <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
                                                 </td>
                                                 <td><a className="label theme-bg2 text-white f-12">Reject</a>
-                                                <a className="label theme-bg text-white f-12">Approve</a></td>
+                                                    <a className="label theme-bg text-white f-12">Approve</a></td>
                                             </tr>
                                         </tbody>
                                     </Table>
