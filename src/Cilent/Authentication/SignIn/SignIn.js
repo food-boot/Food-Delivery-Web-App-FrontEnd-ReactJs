@@ -46,6 +46,8 @@ class SignUp extends React.Component {
                 
                 // console.log(res.headers);
                 // console.log(res.data);
+                localStorage.setItem('data', res.data.userId);
+                localStorage.setItem('type', res.data.userType);
                 if (res.status == 200) {
                     console.log(res.headers);
                     localStorage.setItem('data', res.data.userId);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
 import { Form, Button, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap';
-import {config , baseURL} from "../config";
+import { config, baseURL } from "../config";
 
 import Nav from "../layout/AdminLayout/Breadcrumb/index";
 import axios from "axios";
@@ -86,7 +86,7 @@ class Dashboard extends React.Component {
             })
         console.log(this.state.foods)
 
-        axios.get(baseURL+"/users", config)
+        axios.get(baseURL + "/users", config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -116,7 +116,7 @@ class Dashboard extends React.Component {
 
             })
 
-        axios.get(baseURL+"/orders", config)
+        axios.get(baseURL + "/orders", config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -169,7 +169,8 @@ class Dashboard extends React.Component {
         // var config = {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
-        var url = baseURL +"/foods/" + id;
+        var url = baseURL + "/foods/" + id;
+
 
         console.log(url)
         axios.delete(url, config)
@@ -200,8 +201,8 @@ class Dashboard extends React.Component {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
 
-        
-        axios.get(baseURL +"/foods/"+id, config)
+
+        axios.get(baseURL + "/foods/" + id, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -210,9 +211,9 @@ class Dashboard extends React.Component {
                     var fd = this.state.foods
                     this.setState({
                         foodName: data.foodName,
-                        foodId : data.foodId,
-                        price : data.foodPrice,
-                        foodCategory : data.foodCategory
+                        foodId: data.foodId,
+                        price: data.foodPrice,
+                        foodCategory: data.foodCategory
                     })
 
                 } else {
@@ -228,9 +229,9 @@ class Dashboard extends React.Component {
                 console.log(error.response)
 
             })
-            this.setState({
-                editForm:true
-            })
+        this.setState({
+            editForm: true
+        })
         console.log(this.state.foods)
     }
 
@@ -245,7 +246,7 @@ class Dashboard extends React.Component {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
 
-        axios.put(baseURL+"/foods/"+this.state.foodId, food, config)
+        axios.put(baseURL + "/foods/" + this.state.foodId, food, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -272,7 +273,7 @@ class Dashboard extends React.Component {
 
         console.log(food);
         this.setState({
-            editForm:false
+            editForm: false
         })
         // window.location.reload()
     }
@@ -292,7 +293,7 @@ class Dashboard extends React.Component {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
 
-        axios.post(baseURL+"/foods", food, config)
+        axios.post(baseURL + "/foods", food, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -324,14 +325,72 @@ class Dashboard extends React.Component {
         // var config = {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
-        var url = baseURL+"/orders/" + id;
+        var url = baseURL + "/orders/" + id;
+        axios.get(url, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                var fCount = 0
+                var oCount = 0
+                if (res.status == 200) {
+                    var data = res.data
+                    this.setState({
+                        cost: data.cost,
+                        items: data.items,
+                        userId: data.uerId
+                    })
+                    var order = {
+                        cost:this.state.cost,
+                        items:this.state.items,
+                        userId:this.state.uerId
+                    }
+                    console.log(order)
+                    axios.put(url,order, config)
+                        .then(res => {
+                            console.log(res);
+                            console.log(res.data);                            
+                            if (res.status == 200) {
+                                window.location.reload()
+
+                            } else {
+                                alert("fails")
+                                this.setState({
+                                    errors: res.data.status
+                                });
+                            }
+
+                        })
+                        .catch(error => {
+                            // alert(error.response)
+                            console.log(error.response)
+
+                        })
+
+                    console.log(this.state.items);
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+        // window.location.reload()
+
 
     }
     onDeleteO = (id) => {
         // var config = {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
-        var url = baseURL+"/orders/" + id;
+        var url = baseURL + "/orders/" + id;
 
         console.log(url)
         axios.delete(url, config)
@@ -423,7 +482,7 @@ class Dashboard extends React.Component {
                                             <Table responsive hover>
                                                 <tbody>
                                                     {this.state.orders.map((item, i) => {
-                                                        
+
                                                         if (item.status == false) {
                                                             var self = this;
                                                             return (
@@ -628,9 +687,9 @@ class Dashboard extends React.Component {
                                                             <td>
                                                                 <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
                                                             </td>
-                                                            <td><button className="label theme-bg2 text-white f-12" onClick={()=>this.foodDele(item.foodId)}>Delete</button>
-                                                            <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodEdit(item.foodId)}>Edit</button>
-                                                                </td>
+                                                            <td><button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+                                                            </td>
                                                         </tr>
                                                     )
                                                 }
@@ -655,9 +714,9 @@ class Dashboard extends React.Component {
                                                             <td>
                                                                 <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
                                                             </td>
-                                                            <td><button className="label theme-bg2 text-white f-12" onClick={()=>this.foodDele(item.foodId)}>Delete</button>
-                                                            <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodEdit(item.foodId)}>Edit</button>
-                                                                </td>
+                                                            <td><button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+                                                            </td>
                                                         </tr>
                                                     )
                                                 }
@@ -682,10 +741,10 @@ class Dashboard extends React.Component {
                                                                 <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
                                                             </td>
                                                             <td>
-                                                                <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodDele(item.foodId)}>Delete</button>
-                                                                <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodEdit(item.foodId)}>Edit</button>
-                                                                
-                                                                </td>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+
+                                                            </td>
                                                         </tr>
                                                     )
                                                 }
@@ -697,27 +756,27 @@ class Dashboard extends React.Component {
                                 </Tab>
                             </Tabs>
                         </Col>
-                         {this.state.editForm == true ? (
-                             <Col md={6} xl={4}>
-                             <Card>
-                                 <Card.Header>
-                                     <Card.Title as='h5'>Add New Food Item</Card.Title>
-                                 </Card.Header>
-                                 <Card.Body>
-                                     <div className="row align-items-center justify-content-center">                                         
-                                         <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" value={this.state.foodCategory} readOnly />                   
-                                         <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
-                                         <Form.Control type="text" name="price" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.price} required />
-                                         
-                                         <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Update</button>
- 
-                                     </div>
-                                 </Card.Body>
-                             </Card>
-                         </Col>
-                         ):(
-                             <Col></Col>
-                         )}                   
+                        {this.state.editForm == true ? (
+                            <Col md={6} xl={4}>
+                                <Card>
+                                    <Card.Header>
+                                        <Card.Title as='h5'>Add New Food Item</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <div className="row align-items-center justify-content-center">
+                                            <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" value={this.state.foodCategory} readOnly />
+                                            <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
+                                            <Form.Control type="text" name="price" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.price} required />
+
+                                            <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Update</button>
+
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ) : (
+                                <Col></Col>
+                            )}
                     </Row>
                 </Col>
             </Row>
