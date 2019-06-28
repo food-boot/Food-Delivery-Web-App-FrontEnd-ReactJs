@@ -16,25 +16,7 @@ class App extends Component {
       auth: true,
     };
   }
-  componentDidMount = () => {
-    setTimeout(() => {
-      try {
-        var data = localStorage.getItem('type');
-        console.log(data)
-        if (data == 'user') {
-          this.setState({
-            auth: false
-          })
-        } else {
-          this.setState({
-            auth: true
-          })
-        }
-      } catch{
-        //   this.props.history.push('/signIn')
-      }
-    }, 4000);
-  }
+  
   render() {
     return (
       <Router>
@@ -45,7 +27,7 @@ class App extends Component {
           <Route exact path="/signIn" component={SignIn} />
           <Route exact path="/signUp" component={SignUp} />
           <Route path="/dashboard" component={Dashbord} />
-          <Route path="/form" component={Forms} />
+          <Route path="/users" component={Forms} />
           <Route path="/chart" component={Charts} />
 
         </div>

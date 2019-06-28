@@ -53,9 +53,15 @@ class SignUp extends React.Component {
                     localStorage.setItem('data', res.data.userId);
                     localStorage.setItem('headers', res.headers);
                     // localStorage.setItem('type', res.data.type);
-                    this.props.history.push({
-                        pathname: '/dashboard' 
-                    });
+                    if(res.data.userType == "user"){
+                        this.props.history.push({
+                            pathname: '/cart' 
+                        });
+                    }else{
+                        this.props.history.push({
+                            pathname: '/dashboard' 
+                        });
+                    }  
                     
                 } else{
                     alert("fails")

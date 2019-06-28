@@ -12,26 +12,26 @@ class Breadcrumb extends Component {
     constructor() {
         super();
         this.state = {
-            auth: false
+            auth: true
         };
     }
-    componentDidMount = () => {
-        try {
-            var data = localStorage.getItem('data');
-            console.log(data)
-            if (data == 'user') {
-                this.setState({
-                    auth: false
-                })
-                // var data = localStorage.getItem('data');
-            } else {
-                this.setState({
-                    auth: true
-                })
-            }
-        } catch{
-            //   this.props.history.push('/signIn')
-        }
+    componentDidUpdate = () => {
+        // try {
+        //     var data = localStorage.getItem('data');
+        //     console.log(data)
+        //     if (data == 'user') {
+        //         this.setState({
+        //             auth: false
+        //         })
+        //         // var data = localStorage.getItem('data');
+        //     } else {
+        //         this.setState({
+        //             auth: true
+        //         })
+        //     }
+        // } catch{
+        //     //   this.props.history.push('/signIn')
+        // }
 
     }
 
@@ -51,7 +51,7 @@ class Breadcrumb extends Component {
                     <Navbar.Collapse id="responsive-navbar-nav">
                         <Nav className="mr-auto">
                             <Nav.Link ><Link to="/dashboard">Dashboard</Link></Nav.Link>
-                            <Nav.Link ><Link to="/form">Form</Link></Nav.Link>
+                            <Nav.Link ><Link to="/users">Users</Link></Nav.Link>
                             <Nav.Link ><Link to="/dashboard">charts</Link></Nav.Link>
                             <Nav.Link ><Link to="/cart">Cart</Link></Nav.Link>
                             <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
