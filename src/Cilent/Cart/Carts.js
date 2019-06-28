@@ -6,6 +6,7 @@ import Products from "./components/Products";
 import Footer from "./components/Footer";
 import QuickView from "./components/QuickView";
 import "./scss/style.scss";
+import {config , baseURL} from "../config"
 
 class Carts extends Component {
   constructor() {
@@ -36,11 +37,11 @@ class Carts extends Component {
   }
   // Fetch Initial Set of Products from external API
   getProducts() {
-      var config = {
-        headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-    };
+    //   var config = {
+    //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+    // };
     let url =
-      "http://localhost:8080/foods";
+      baseURL+"/foods";
     axios.get(url , config).then(response => {
       console.log(response.data)
       this.setState({

@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
-
+import {config , baseURL} from "../../config"
 import axios from "axios";
 class SignUp extends React.Component {
     constructor() {
@@ -38,7 +38,7 @@ class SignUp extends React.Component {
             password: this.state.password,
             
         };
-        axios.post(`http://localhost:8080/users/login`, user)
+        axios.post(baseURL+"/users/login", user)
             .then(res => {
                 //console.log(res);
                 // alert(JSON.stringify(res.headers))
@@ -46,6 +46,8 @@ class SignUp extends React.Component {
                 
                 // console.log(res.headers);
                 // console.log(res.data);
+                localStorage.setItem('data', res.data.userId);
+                localStorage.setItem('type', res.data.userType);
                 if (res.status == 200) {
                     console.log(res.headers);
                     localStorage.setItem('data', res.data.userId);
