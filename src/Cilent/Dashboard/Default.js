@@ -211,7 +211,7 @@ class Dashboard extends React.Component {
                     this.setState({
                         foodName: data.foodName,
                         foodId : data.foodId,
-                        foodPrice : data.foodPrice,
+                        price : data.foodPrice,
                         foodCategory : data.foodCategory
                     })
 
@@ -235,11 +235,12 @@ class Dashboard extends React.Component {
     }
 
     updateFood = () => {
-        const food = {
+        var food = {
             foodName: this.state.foodName,
             foodPrice: this.state.price,
-            foodCategory: this.state.category,
+            foodCategory: this.state.foodCategory,
         };
+        console.log(food);
         // var config = {
         //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
         // };
@@ -249,7 +250,8 @@ class Dashboard extends React.Component {
                 console.log(res);
                 console.log(res.data);
                 if (res.status == 200) {
-                    alert("Su")
+                    // alert("Su")
+                    window.location.reload()
 
                 } else {
                     alert("fails")
@@ -263,7 +265,7 @@ class Dashboard extends React.Component {
                 // alert(error.response)
                 console.log(error.response)
                 if (error.response.status == 500) {
-                    alert("User Already Exsists")
+                    alert("Error")
                     this.setState({ fireRedirect: true })
                 }
             })
@@ -295,7 +297,7 @@ class Dashboard extends React.Component {
                 console.log(res);
                 console.log(res.data);
                 if (res.status == 200) {
-                    alert("Su")
+                    window.location.reload()
 
                 } else {
                     alert("fails")
@@ -609,6 +611,7 @@ class Dashboard extends React.Component {
                                 </Card.Body>
                             </Card>
                         </Col>
+
                         <Col md={6} xl={8} className='m-b-30'>
                             <Tabs defaultActiveKey="breakfast" id="uncontrolled-tab-example">
                                 <Tab eventKey="breakfast" title="Breakfast">
@@ -702,10 +705,11 @@ class Dashboard extends React.Component {
                                  </Card.Header>
                                  <Card.Body>
                                      <div className="row align-items-center justify-content-center">                                         
-                                         <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodCategory} readOnly />                   
+                                         <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" value={this.state.foodCategory} readOnly />                   
                                          <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
-                                         <Form.Control type="number" name="price" placeholder="Price" className="mb-3" onChange={this.onChange} value={this.state.foodPrice} required />
-                                         <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Add</button>
+                                         <Form.Control type="text" name="price" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.price} required />
+                                         
+                                         <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Update</button>
  
                                      </div>
                                  </Card.Body>
