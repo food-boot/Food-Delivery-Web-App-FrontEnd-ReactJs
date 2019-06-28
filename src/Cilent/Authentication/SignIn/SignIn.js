@@ -42,7 +42,7 @@ class SignUp extends React.Component {
             .then(res => {
                 //console.log(res);
                 // alert(JSON.stringify(res.headers))
-                console.log(res.headers.Authorization);
+                //console.log(res.headers.Authorization);
                 
                 // console.log(res.headers);
                 // console.log(res.data);
