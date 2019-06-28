@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
 import { Form, Button, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap';
-
+import {config , baseURL} from "../config";
 
 import Nav from "../layout/AdminLayout/Breadcrumb/index";
 import axios from "axios";
@@ -16,7 +16,8 @@ class Dashboard extends React.Component {
             userCount: 0,
             oCount: 0,
             fCount: 0,
-            orders: []
+            orders: [],
+            editForm: false
         };
         this.onDeleteO = this.onDeleteO.bind(this)
 
@@ -48,12 +49,12 @@ class Dashboard extends React.Component {
         } catch{
             this.props.history.push('/signIn')
         }
-        var config = {
-            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        };
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
 
 
-        axios.get(`http://localhost:8080/foods`, config)
+        axios.get(baseURL + "/foods", config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -85,7 +86,7 @@ class Dashboard extends React.Component {
             })
         console.log(this.state.foods)
 
-        axios.get(`http://localhost:8080/users`, config)
+        axios.get(baseURL+"/users", config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -115,7 +116,7 @@ class Dashboard extends React.Component {
 
             })
 
-        axios.get(`http://localhost:8080/orders`, config)
+        axios.get(baseURL+"/orders", config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -164,16 +165,14 @@ class Dashboard extends React.Component {
 
     }
 
+    foodDele = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+        var url = baseURL +"/foods/" + id;
 
-    onChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
-    }
-
-    onDeleteO = (id) => {
-        var config = {
-            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        };
-        axios.delete(`http://localhost:8080/orders/` + id, config)
+        console.log(url)
+        axios.delete(url, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -194,9 +193,91 @@ class Dashboard extends React.Component {
                 console.log(error.response)
 
             })
-
-
     }
+
+    foodEdit = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+
+        
+        axios.get(baseURL +"/foods/"+id, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    var data = res.data
+                    var fd = this.state.foods
+                    this.setState({
+                        foodName: data.foodName,
+                        foodId : data.foodId,
+                        foodPrice : data.foodPrice,
+                        foodCategory : data.foodCategory
+                    })
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+            this.setState({
+                editForm:true
+            })
+        console.log(this.state.foods)
+    }
+
+    updateFood = () => {
+        const food = {
+            foodName: this.state.foodName,
+            foodPrice: this.state.price,
+            foodCategory: this.state.category,
+        };
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+
+        axios.put(baseURL+"/foods/"+this.state.foodId, food, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    alert("Su")
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+                if (error.response.status == 500) {
+                    alert("User Already Exsists")
+                    this.setState({ fireRedirect: true })
+                }
+            })
+
+        console.log(food);
+        this.setState({
+            editForm:false
+        })
+        // window.location.reload()
+    }
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
 
     onSubmit = () => {
 
@@ -205,11 +286,11 @@ class Dashboard extends React.Component {
             foodPrice: this.state.price,
             foodCategory: this.state.category,
         };
-        var config = {
-            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        };
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
 
-        axios.post(`http://localhost:8080/foods`, food, config)
+        axios.post(baseURL+"/foods", food, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -236,11 +317,22 @@ class Dashboard extends React.Component {
         console.log(food);
         window.location.reload()
     }
+
+    onApprove = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+        var url = baseURL+"/orders/" + id;
+
+    }
     onDeleteO = (id) => {
-        var config = {
-            headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        };
-        axios.delete(`http://localhost:8080/orders/` + id, config)
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+        var url = baseURL+"/orders/" + id;
+
+        console.log(url)
+        axios.delete(url, config)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -265,6 +357,7 @@ class Dashboard extends React.Component {
 
     }
     render() {
+        var self = this;
         return (
             <Row className="justify-content-md-center">
                 {/* <Nav />              */}
@@ -327,11 +420,10 @@ class Dashboard extends React.Component {
 
                                             <Table responsive hover>
                                                 <tbody>
-                                                    {this.state.orders.map(function (item, i) {
-
-
+                                                    {this.state.orders.map((item, i) => {
+                                                        
                                                         if (item.status == false) {
-
+                                                            var self = this;
                                                             return (
                                                                 <tr key={i} className="unread">
                                                                     <td>
@@ -344,33 +436,7 @@ class Dashboard extends React.Component {
                                                                         </h6>
                                                                     </td>
                                                                     <td>
-                                                                        <button className="label theme-bg2 text-white f-12" onClick={() => {
-                                                                            const config = {
-                                                                                headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-                                                                            };
-                                                                            const url = "http://localhost:8080/orders/" + item.orderId
-                                                                            axios.delete(url,config)
-                                                                                .then(res => {
-                                                                                    console.log(res);
-                                                                                    console.log(res.data);
-                                                                                    if (res.status == 200) {
-                                                                                        window.location.reload()
-
-                                                                                    } else {
-
-                                                                                        alert("fails")
-                                                                                        this.setState({
-                                                                                            errors: res.data.status
-                                                                                        });
-                                                                                    }
-
-                                                                                })
-                                                                                .catch(error => {
-                                                                                    // alert(error.response)
-                                                                                    console.log(error.response)
-
-                                                                                })
-                                                                        }}>Reject</button>
+                                                                        <button className="label theme-bg2 text-white f-12" onClick={() => this.onDeleteO(item.orderId)}>Reject</button>
                                                                         <button className="label theme-bg text-white f-12" onClick={() => this.onApprove(item.orderId)}>Approve</button></td>
                                                                 </tr>
                                                             )
@@ -394,7 +460,7 @@ class Dashboard extends React.Component {
 
                                             <Table responsive hover>
                                                 <tbody>
-                                                    {this.state.orders.map(function (item, i) {
+                                                    {this.state.orders.map((item, i) => {
                                                         if (item.status == true) {
                                                             return (
                                                                 <tr key={i} className="unread">
@@ -408,32 +474,7 @@ class Dashboard extends React.Component {
                                                                         </h6>
                                                                     </td>
                                                                     <td>
-                                                                        <button onClick={() => {
-                                                                            const config = {
-                                                                                headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-                                                                            };
-                                                                            axios.delete("http://localhost:8080/orders/" + item.orderId, {headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }})
-                                                                                .then(res => {
-                                                                                    console.log(res);
-                                                                                    console.log(res.data);
-                                                                                    if (res.status == 200) {
-                                                                                        window.location.reload()
-
-                                                                                    } else {
-
-                                                                                        alert("fails")
-                                                                                        this.setState({
-                                                                                            errors: res.data.status
-                                                                                        });
-                                                                                    }
-
-                                                                                })
-                                                                                .catch(error => {
-                                                                                    // alert(error.response)
-                                                                                    console.log(error.response)
-
-                                                                                })
-                                                                        }} className="label theme-bg2 text-white f-12" >Delete</button>
+                                                                        <button onClick={() => this.onDeleteO(item.orderId)} className="label theme-bg2 text-white f-12" >Delete</button>
 
                                                                     </td>
                                                                 </tr>
@@ -573,7 +614,7 @@ class Dashboard extends React.Component {
                                 <Tab eventKey="breakfast" title="Breakfast">
                                     <Table responsive hover>
                                         <tbody>
-                                            {this.state.foods.map(function (item, i) {
+                                            {this.state.foods.map((item, i) => {
                                                 if (item.foodCategory == "Breakfast") {
                                                     return (
                                                         <tr key={i} className="unread">
@@ -584,7 +625,9 @@ class Dashboard extends React.Component {
                                                             <td>
                                                                 <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
                                                             </td>
-                                                            <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
+                                                            <td><button className="label theme-bg2 text-white f-12" onClick={()=>this.foodDele(item.foodId)}>Delete</button>
+                                                            <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodEdit(item.foodId)}>Edit</button>
+                                                                </td>
                                                         </tr>
                                                     )
                                                 }
@@ -598,7 +641,7 @@ class Dashboard extends React.Component {
                                 <Tab eventKey="lunch" title="Lunch">
                                     <Table responsive hover>
                                         <tbody>
-                                            {this.state.foods.map(function (item, i) {
+                                            {this.state.foods.map((item, i) => {
                                                 if (item.foodCategory == "Lunch") {
                                                     return (
                                                         <tr key={i} className="unread">
@@ -609,7 +652,9 @@ class Dashboard extends React.Component {
                                                             <td>
                                                                 <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
                                                             </td>
-                                                            <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
+                                                            <td><button className="label theme-bg2 text-white f-12" onClick={()=>this.foodDele(item.foodId)}>Delete</button>
+                                                            <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodEdit(item.foodId)}>Edit</button>
+                                                                </td>
                                                         </tr>
                                                     )
                                                 }
@@ -622,7 +667,7 @@ class Dashboard extends React.Component {
                                 <Tab eventKey="dinner" title="Dinner">
                                     <Table responsive hover>
                                         <tbody>
-                                            {this.state.foods.map(function (item, i) {
+                                            {this.state.foods.map((item, i) => {
                                                 if (item.foodCategory == "Dinner") {
                                                     return (
                                                         <tr key={i} className="unread">
@@ -633,7 +678,11 @@ class Dashboard extends React.Component {
                                                             <td>
                                                                 <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
                                                             </td>
-                                                            <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
+                                                            <td>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={()=>this.foodEdit(item.foodId)}>Edit</button>
+                                                                
+                                                                </td>
                                                         </tr>
                                                     )
                                                 }
@@ -645,7 +694,26 @@ class Dashboard extends React.Component {
                                 </Tab>
                             </Tabs>
                         </Col>
-
+                         {this.state.editForm == true ? (
+                             <Col md={6} xl={4}>
+                             <Card>
+                                 <Card.Header>
+                                     <Card.Title as='h5'>Add New Food Item</Card.Title>
+                                 </Card.Header>
+                                 <Card.Body>
+                                     <div className="row align-items-center justify-content-center">                                         
+                                         <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodCategory} readOnly />                   
+                                         <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
+                                         <Form.Control type="number" name="price" placeholder="Price" className="mb-3" onChange={this.onChange} value={this.state.foodPrice} required />
+                                         <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Add</button>
+ 
+                                     </div>
+                                 </Card.Body>
+                             </Card>
+                         </Col>
+                         ):(
+                             <Col></Col>
+                         )}                   
                     </Row>
                 </Col>
             </Row>

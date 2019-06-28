@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink , Redirect} from 'react-router-dom';
-
+import {config , baseURL} from "../../config"
 import '../../../assets/scss/style.scss';
 import axios from "axios";
 class SignUp extends React.Component {
@@ -42,7 +42,7 @@ class SignUp extends React.Component {
         };
      console.log(user);
 
-        axios.post(`http://localhost:8080/users`, user)
+        axios.post(baseURL+"/users", user)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
