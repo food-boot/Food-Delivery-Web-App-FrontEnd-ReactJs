@@ -1,268 +1,561 @@
 import React from 'react';
 import { Row, Col, Card, Table, Tabs, Tab } from 'react-bootstrap';
+import { Form, Button, InputGroup, FormControl, DropdownButton, Dropdown } from 'react-bootstrap';
+import { config, baseURL } from "../config";
 
 import Nav from "../layout/AdminLayout/Breadcrumb/index";
-
+import axios from "axios";
 class Dashboard extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            category: '',
+            price: '',
+            foodName: '',
+            foods: [],
+            userCount: 0,
+            oCount: 0,
+            fCount: 0,
+            orders: [],
+            editForm: false
+        };
+        this.onDeleteO = this.onDeleteO.bind(this)
 
+    }
     componentDidMount = () => {
-        try{
+        try {
             var data = localStorage.getItem('data');
-            if(data == null){
+            var type = localStorage.getItem('type');
+            if (data == null) {
                 this.props.history.push('/signIn')
-            }else{
+            } else {
                 console.log(data)
             }
-        }catch{
+
+            if (type == 'user') {
+                this.props.history.push('/dashboard')
+            }
+        } catch{
             this.props.history.push('/signIn')
         }
-       
+
+        try {
+            var data = localStorage.getItem('data');
+            if (data == null) {
+                this.props.history.push('/signIn')
+            } else {
+                console.log(data)
+            }
+        } catch{
+            this.props.history.push('/signIn')
+        }
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+
+
+        axios.get(baseURL + "/foods", config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    var data = res.data
+                    var fd = this.state.foods
+                    data.forEach(element => {
+                        fd.push({
+                            foodId: element.foodId,
+                            foodName: element.foodName,
+                            foodPrice: element.foodPrice,
+                            foodCategory: element.foodCategory
+                        })
+
+                    });
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+        console.log(this.state.foods)
+
+        axios.get(baseURL + "/users", config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                var count = 0
+                if (res.status == 200) {
+                    var data = res.data
+                    data.forEach(element => {
+                        if (element.user_type != "admin") {
+                            count = count + 1;
+                        }
+                    });
+                    this.setState({
+                        userCount: count
+                    })
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+        axios.get(baseURL + "/orders", config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                var fCount = 0
+                var oCount = 0
+                if (res.status == 200) {
+                    var data = res.data
+                    var order = this.state.orders
+                    data.forEach(element => {
+                        if (element.status == true) {
+                            fCount = fCount + 1;
+                        } else {
+                            oCount = oCount + 1;
+                        }
+                        var item = " ";
+                        for (var i = 0; i < element.items.length; i++) {
+                            item = item + element.items[i] + ", "
+                        }
+                        order.push({
+                            cost: element.cost,
+                            orderId: element.orderId,
+                            items: item,
+                            status: element.status
+                        })
+                    });
+                    this.setState({
+                        fCount: fCount,
+                        oCount: oCount
+                    })
+
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+        console.log(this.state.orders)
+
     }
 
-    componentDidUpdate = () => {
-        try{
-            var data = localStorage.getItem('data');
-            if(data == null){
-                this.props.history.push('/signIn')
-            }else{
-                console.log(data)
-            }
-        }catch{
-            this.props.history.push('/signIn')
-        }
-       
+    foodDele = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+        var url = baseURL + "/foods/" + id;
+
+
+        console.log(url)
+        axios.delete(url, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    window.location.reload()
+
+                } else {
+
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+    }
+
+    foodEdit = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+
+
+        axios.get(baseURL + "/foods/" + id, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    var data = res.data
+                    var fd = this.state.foods
+                    this.setState({
+                        foodName: data.foodName,
+                        foodId: data.foodId,
+                        price: data.foodPrice,
+                        foodCategory: data.foodCategory
+                    })
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+        this.setState({
+            editForm: true
+        })
+        console.log(this.state.foods)
+    }
+
+    updateFood = () => {
+        var food = {
+            foodName: this.state.foodName,
+            foodPrice: this.state.price,
+            foodCategory: this.state.foodCategory,
+        };
+        console.log(food);
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+
+        axios.put(baseURL + "/foods/" + this.state.foodId, food, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    // alert("Su")
+                    window.location.reload()
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+                if (error.response.status == 500) {
+                    alert("Error")
+                    this.setState({ fireRedirect: true })
+                }
+            })
+
+        console.log(food);
+        this.setState({
+            editForm: false
+        })
+        // window.location.reload()
+    }
+    onChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value });
+    }
+
+
+    onSubmit = () => {
+
+        const food = {
+            foodName: this.state.foodName,
+            foodPrice: this.state.price,
+            foodCategory: this.state.category,
+        };
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+
+        axios.post(baseURL + "/foods", food, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    window.location.reload()
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+                if (error.response.status == 500) {
+                    alert("User Already Exsists")
+                    this.setState({ fireRedirect: true })
+                }
+            })
+
+        console.log(food);
+        window.location.reload()
+    }
+
+    onApprove = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+        var url = baseURL + "/orders/" + id;
+        axios.get(url, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                var fCount = 0
+                var oCount = 0
+                if (res.status == 200) {
+                    var data = res.data
+                    this.setState({
+                        cost: data.cost,
+                        items: data.items,
+                        userId: data.uerId
+                    })
+                    var order = {
+                        cost:this.state.cost,
+                        items:this.state.items,
+                        userId:this.state.uerId
+                    }
+                    console.log(order)
+                    axios.put(url,order, config)
+                        .then(res => {
+                            console.log(res);
+                            console.log(res.data);                            
+                            if (res.status == 200) {
+                                window.location.reload()
+
+                            } else {
+                                alert("fails")
+                                this.setState({
+                                    errors: res.data.status
+                                });
+                            }
+
+                        })
+                        .catch(error => {
+                            // alert(error.response)
+                            console.log(error.response)
+
+                        })
+
+                    console.log(this.state.items);
+
+                } else {
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+        // window.location.reload()
+
+
+    }
+    onDeleteO = (id) => {
+        // var config = {
+        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
+        // };
+        var url = baseURL + "/orders/" + id;
+
+        console.log(url)
+        axios.delete(url, config)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status == 200) {
+                    window.location.reload()
+
+                } else {
+
+                    alert("fails")
+                    this.setState({
+                        errors: res.data.status
+                    });
+                }
+
+            })
+            .catch(error => {
+                // alert(error.response)
+                console.log(error.response)
+
+            })
+
+
     }
     render() {
-        const tabContent = (
-            <div>
-
-                <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-                    <div className="m-r-10 photo-table">
-                        <a><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></a>
-                    </div>
-                    <div className="media-body">
-                        <h6 className="m-0 d-inline">Silje Larsen</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-up f-22 m-r-10 text-c-green" />3784</span>
-                    </div>
-                </div>
-                <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-                    <div className="m-r-10 photo-table">
-                        <a ><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></a>
-                    </div>
-                    <div className="media-body">
-                        <h6 className="m-0 d-inline">Julie Vad</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-up f-22 m-r-10 text-c-green" />3544</span>
-                    </div>
-                </div>
-                <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-                    <div className="m-r-10 photo-table">
-                        <a ><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></a>
-                    </div>
-                    <div className="media-body">
-                        <h6 className="m-0 d-inline">Storm Hanse</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-down f-22 m-r-10 text-c-red" />2739</span>
-                    </div>
-                </div>
-                <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-                    <div className="m-r-10 photo-table">
-                        <a><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></a>
-                    </div>
-                    <div className="media-body">
-                        <h6 className="m-0 d-inline">Frida Thomse</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-down f-22 m-r-10 text-c-red" />1032</span>
-                    </div>
-                </div>
-                <div className="media friendlist-box align-items-center justify-content-center m-b-20">
-                    <div className="m-r-10 photo-table">
-                        <a><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></a>
-                    </div>
-                    <div className="media-body">
-                        <h6 className="m-0 d-inline">Silje Larsen</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-up f-22 m-r-10 text-c-green" />8750</span>
-                    </div>
-                </div>
-                <div className="media friendlist-box align-items-center justify-content-center">
-                    <div className="m-r-10 photo-table">
-                        <a><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></a>
-                    </div>
-                    <div className="media-body">
-                        <h6 className="m-0 d-inline">Storm Hanse</h6>
-                        <span className="float-right d-flex  align-items-center"><i className="fa fa-caret-down f-22 m-r-10 text-c-red" />8750</span>
-                    </div>
-                </div>
-            </div>
-        );
-
+        var self = this;
         return (
-            <Row className="justify-content-md-center">               
+            <Row className="justify-content-md-center">
+                {/* <Nav />              */}
                 <Col md={10} className="justify-content-md-center">
                     <Row className="justify-content-md-center">
                         <Col md={6} xl={4}>
                             <Card>
+                                <Card.Header>
+                                    <Card.Title as='h5'>Users</Card.Title>
+                                </Card.Header>
                                 <Card.Body>
-                                    <h6 className='mb-4'>Daily Sales</h6>
                                     <div className="row d-flex align-items-center">
-                                        <div className="col-9">
-                                            <h3 className="f-w-300 d-flex align-items-center m-b-0"><i className="feather icon-arrow-up text-c-green f-30 m-r-5" /> $249.95</h3>
+                                        <div className="col-12">
+                                            <h3 className="align-items-center">{this.state.userCount}</h3>
                                         </div>
+                                    </div>
 
-                                        <div className="col-3 text-right">
-                                            <p className="m-b-0">50%</p>
-                                        </div>
-                                    </div>
-                                    <div className="progress m-t-30" style={{ height: '7px' }}>
-                                        <div className="progress-bar progress-c-theme" role="progressbar" style={{ width: '50%' }} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" />
-                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
                         <Col md={6} xl={4}>
                             <Card>
+                                <Card.Header>
+                                    <Card.Title as='h5'>Ongonin Orders</Card.Title>
+                                </Card.Header>
                                 <Card.Body>
-                                    <h6 className='mb-4'>Monthly Sales</h6>
                                     <div className="row d-flex align-items-center">
-                                        <div className="col-9">
-                                            <h3 className="f-w-300 d-flex align-items-center m-b-0"><i className="feather icon-arrow-down text-c-red f-30 m-r-5" /> $2.942.32</h3>
+                                        <div className="col-12">
+                                            <h3 className="align-items-center">{this.state.oCount}</h3>
                                         </div>
+                                    </div>
 
-                                        <div className="col-3 text-right">
-                                            <p className="m-b-0">36%</p>
-                                        </div>
-                                    </div>
-                                    <div className="progress m-t-30" style={{ height: '7px' }}>
-                                        <div className="progress-bar progress-c-theme2" role="progressbar" style={{ width: '35%' }} aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" />
-                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
                         <Col xl={4}>
                             <Card>
-                                <Card.Body>
-                                    <h6 className='mb-4'>Yearly Sales</h6>
-                                    <div className="row d-flex align-items-center">
-                                        <div className="col-9">
-                                            <h3 className="f-w-300 d-flex align-items-center m-b-0"><i className="feather icon-arrow-up text-c-green f-30 m-r-5" /> $8.638.32</h3>
-                                        </div>
-
-                                        <div className="col-3 text-right">
-                                            <p className="m-b-0">70%</p>
-                                        </div>
-                                    </div>
-                                    <div className="progress m-t-30" style={{ height: '7px' }}>
-                                        <div className="progress-bar progress-c-theme" role="progressbar" style={{ width: '70%' }} aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" />
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={6} xl={8}>
-                            <Card className='Recent-Users'>
                                 <Card.Header>
-                                    <Card.Title as='h5'>Recent Users</Card.Title>
+                                    <Card.Title as='h5'>Finished Orders</Card.Title>
                                 </Card.Header>
-                                <Card.Body className='px-0 py-2'>
-                                    <Table responsive hover>
-                                        <tbody>
-                                            <tr className="unread">
-                                                <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                <td>
-                                                    <h6 className="mb-1">Isabella Christensen</h6>
-                                                    <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                </td>
-                                                <td>
-                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />11 MAY 12:56</h6>
-                                                </td>
-                                                <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                            </tr>
-                                            <tr className="unread">
-                                                <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                <td>
-                                                    <h6 className="mb-1">Mathilde Andersen</h6>
-                                                    <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                </td>
-                                                <td>
-                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-red f-10 m-r-15" />11 MAY 10:35</h6>
-                                                </td>
-                                                <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                            </tr>
-                                            <tr className="unread">
-                                                <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                <td>
-                                                    <h6 className="mb-1">Karla Sorensen</h6>
-                                                    <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                </td>
-                                                <td>
-                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />9 MAY 17:38</h6>
-                                                </td>
-                                                <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                            </tr>
-                                            <tr className="unread">
-                                                <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                <td>
-                                                    <h6 className="mb-1">Ida Jorgensen</h6>
-                                                    <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                </td>
-                                                <td>
-                                                    <h6 className="text-muted f-w-300"><i className="fa fa-circle text-c-red f-10 m-r-15" />19 MAY 12:56</h6>
-                                                </td>
-                                                <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                            </tr>
-                                            <tr className="unread">
-                                                <td><img className="rounded-circle" style={{ width: '40px' }} alt="activity-user" /></td>
-                                                <td>
-                                                    <h6 className="mb-1">Albert Andersen</h6>
-                                                    <p className="m-0">Lorem Ipsum is simply dummy text of…</p>
-                                                </td>
-                                                <td>
-                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />21 July 12:56</h6>
-                                                </td>
-                                                <td><a className="label theme-bg2 text-white f-12">Reject</a><a className="label theme-bg text-white f-12">Approve</a></td>
-                                            </tr>
-                                        </tbody>
-                                    </Table>
+                                <Card.Body>
+                                    <div className="row d-flex align-items-center">
+                                        <div className="col-12">
+                                            <h3 className="align-items-center">{this.state.fCount}</h3>
+                                        </div>
+                                    </div>
+
                                 </Card.Body>
                             </Card>
                         </Col>
-                        <Col md={6} xl={4}>
-                            <Card className='card-event'>
-                                <Card.Body>
-                                    <div className="row align-items-center justify-content-center">
-                                        <div className="col">
-                                            <h5 className="m-0">Upcoming Event</h5>
-                                        </div>
-                                        <div className="col-auto">
-                                            <label className="label theme-bg2 text-white f-14 f-w-400 float-right">34%</label>
-                                        </div>
-                                    </div>
-                                    <h2 className="mt-2 f-w-300">45<sub className="text-muted f-14">Competitors</sub></h2>
-                                    <h6 className="text-muted mt-3 mb-0">You can participate in event </h6>
-                                    <i className="fa fa-angellist text-c-purple f-50" />
-                                </Card.Body>
-                            </Card>
-                            <Card>
-                                <Card.Body className='border-bottom'>
-                                    <div className="row d-flex align-items-center">
-                                        <div className="col-auto">
-                                            <i className="feather icon-zap f-30 text-c-green" />
-                                        </div>
-                                        <div className="col">
-                                            <h3 className="f-w-300">235</h3>
-                                            <span className="d-block text-uppercase">total ideas</span>
-                                        </div>
-                                    </div>
-                                </Card.Body>
-                                <Card.Body>
-                                    <div className="row d-flex align-items-center">
-                                        <div className="col-auto">
-                                            <i className="feather icon-map-pin f-30 text-c-blue" />
-                                        </div>
-                                        <div className="col">
-                                            <h3 className="f-w-300">26</h3>
-                                            <span className="d-block text-uppercase">total locations</span>
-                                        </div>
-                                    </div>
-                                </Card.Body>
-                            </Card>
+
+                        <Col md={12} xl={12}>
+                            <Tabs defaultActiveKey="new" id="uncontrolled-tab-example">
+                                <Tab eventKey="new" title="New Orders">
+                                    <Card className='Recent-Users'>
+                                        <Card.Header>
+                                            <Card.Title as='h5'>New Orders</Card.Title>
+                                        </Card.Header>
+                                        <Card.Body className='px-0 py-2'>
+
+                                            <Table responsive hover>
+                                                <tbody>
+                                                    {this.state.orders.map((item, i) => {
+
+                                                        if (item.status == false) {
+                                                            var self = this;
+                                                            return (
+                                                                <tr key={i} className="unread">
+                                                                    <td>
+                                                                        <h6 className="mb-1">{item.items}</h6>
+                                                                        <p className="m-0">{item.orderId}</p>
+                                                                    </td>
+                                                                    <td>
+                                                                        <h6 className="text-muted">
+                                                                            <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
+                                                                        </h6>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button className="label theme-bg2 text-white f-12" onClick={() => this.onDeleteO(item.orderId)}>Reject</button>
+                                                                        <button className="label theme-bg text-white f-12" onClick={() => this.onApprove(item.orderId)}>Approve</button></td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                    })
+                                                    }
+
+
+                                                </tbody>
+                                            </Table>
+                                        </Card.Body>
+                                    </Card>
+                                </Tab>
+                                <Tab eventKey="past" title="Finished orders">
+                                    <Card className='Recent-Users'>
+                                        <Card.Header>
+                                            <Card.Title as='h5'>Finished Orders</Card.Title>
+                                        </Card.Header>
+                                        <Card.Body className='px-0 py-2'>
+
+                                            <Table responsive hover>
+                                                <tbody>
+                                                    {this.state.orders.map((item, i) => {
+                                                        if (item.status == true) {
+                                                            return (
+                                                                <tr key={i} className="unread">
+                                                                    <td>
+                                                                        <h6 className="mb-1">{item.items}  </h6>
+                                                                        <p className="m-0">{item.orderId}</p>
+                                                                    </td>
+                                                                    <td>
+                                                                        <h6 className="text-muted">
+                                                                            <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
+                                                                        </h6>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button onClick={() => this.onDeleteO(item.orderId)} className="label theme-bg2 text-white f-12" >Delete</button>
+
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        }
+
+                                                    })
+                                                    }
+
+
+                                                </tbody>
+                                            </Table>
+                                        </Card.Body>
+                                    </Card>
+                                </Tab>
+
+                            </Tabs>
+                            <br /> <br /><br />
                         </Col>
+                        <br /> <br /><br />
                         <Col md={6} xl={4}>
                             <Card className='card-social'>
                                 <Card.Body className='border-bottom'>
@@ -359,75 +652,131 @@ class Dashboard extends React.Component {
                         <Col md={6} xl={4}>
                             <Card>
                                 <Card.Header>
-                                    <Card.Title as='h5'>Rating</Card.Title>
+                                    <Card.Title as='h5'>Add New Food Item</Card.Title>
                                 </Card.Header>
                                 <Card.Body>
-                                    <div className="row align-items-center justify-content-center m-b-20">
-                                        <div className="col-6">
-                                            <h2 className="f-w-300 d-flex align-items-center float-left m-0">4.7 <i className="fa fa-star f-10 m-l-10 text-c-yellow" /></h2>
-                                        </div>
-                                        <div className="col-6">
-                                            <h6 className="d-flex  align-items-center float-right m-0">0.4 <i className="fa fa-caret-up text-c-green f-22 m-l-10" /></h6>
-                                        </div>
-                                    </div>
+                                    <div className="row align-items-center justify-content-center">
+                                        <Form.Control size="lg" name="category" as="select" className="mb-3" onChange={this.onChange} required>
+                                            <option value="">Select Category</option>
+                                            <option value="Breakfast">Breakfast</option>
+                                            <option value="Lunch">Lunch</option>
+                                            <option value="Dinner">Dinner</option>
+                                        </Form.Control>
+                                        <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} required />
+                                        <Form.Control type="number" name="price" placeholder="Price" className="mb-3" onChange={this.onChange} required />
+                                        <button className="label theme-bg text-white f-12" name="category" onClick={() => this.onSubmit()}>Add</button>
 
-                                    <div className="row">
-                                        <div className="col-xl-12">
-                                            <h6 className="align-items-center float-left"><i className="fa fa-star f-10 m-r-10 text-c-yellow" />5</h6>
-                                            <h6 className="align-items-center float-right">384</h6>
-                                            <div className="progress m-t-30 m-b-20" style={{ height: '6px' }}>
-                                                <div className="progress-bar progress-c-theme" role="progressbar" style={{ width: '70%' }} aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" />
-                                            </div>
-                                        </div>
-
-                                        <div className="col-xl-12">
-                                            <h6 className="align-items-center float-left"><i className="fa fa-star f-10 m-r-10 text-c-yellow" />4</h6>
-                                            <h6 className="align-items-center float-right">145</h6>
-                                            <div className="progress m-t-30  m-b-20" style={{ height: '6px' }}>
-                                                <div className="progress-bar progress-c-theme" role="progressbar" style={{ width: '35%' }} aria-valuenow="35" aria-valuemin="0" aria-valuemax="100" />
-                                            </div>
-                                        </div>
-
-                                        <div className="col-xl-12">
-                                            <h6 className="align-items-center float-left"><i className="fa fa-star f-10 m-r-10 text-c-yellow" />3</h6>
-                                            <h6 className="align-items-center float-right">24</h6>
-                                            <div className="progress m-t-30  m-b-20" style={{ height: '6px' }}>
-                                                <div className="progress-bar progress-c-theme" role="progressbar" style={{ width: '25%' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" />
-                                            </div>
-                                        </div>
-
-                                        <div className="col-xl-12">
-                                            <h6 className="align-items-center float-left"><i className="fa fa-star f-10 m-r-10 text-c-yellow" />2</h6>
-                                            <h6 className="align-items-center float-right">1</h6>
-                                            <div className="progress m-t-30  m-b-20" style={{ height: '6px' }}>
-                                                <div className="progress-bar progress-c-theme" role="progressbar" style={{ width: '10%' }} aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" />
-                                            </div>
-                                        </div>
-                                        <div className="col-xl-12">
-                                            <h6 className="align-items-center float-left"><i className="fa fa-star f-10 m-r-10 text-c-yellow" />1</h6>
-                                            <h6 className="align-items-center float-right">0</h6>
-                                            <div className="progress m-t-30  m-b-5" style={{ height: '6px' }}>
-                                                <div className="progress-bar" role="progressbar" style={{ width: '0%' }} aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" />
-                                            </div>
-                                        </div>
                                     </div>
                                 </Card.Body>
                             </Card>
                         </Col>
+
                         <Col md={6} xl={8} className='m-b-30'>
-                            <Tabs defaultActiveKey="today" id="uncontrolled-tab-example">
-                                <Tab eventKey="today" title="Today">
-                                    {tabContent}
+                            <Tabs defaultActiveKey="breakfast" id="uncontrolled-tab-example">
+                                <Tab eventKey="breakfast" title="Breakfast">
+                                    <Table responsive hover>
+                                        <tbody>
+                                            {this.state.foods.map((item, i) => {
+                                                if (item.foodCategory == "Breakfast") {
+                                                    return (
+                                                        <tr key={i} className="unread">
+                                                            <td>
+                                                                <h6 className="mb-1">{item.foodName}</h6>
+                                                                <p className="m-0">{item.foodName}</p>
+                                                            </td>
+                                                            <td>
+                                                                <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                            </td>
+                                                            <td><button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+
+                                            })
+                                            }
+
+                                        </tbody>
+                                    </Table>
                                 </Tab>
-                                <Tab eventKey="week" title="This Week">
-                                    {tabContent}
+                                <Tab eventKey="lunch" title="Lunch">
+                                    <Table responsive hover>
+                                        <tbody>
+                                            {this.state.foods.map((item, i) => {
+                                                if (item.foodCategory == "Lunch") {
+                                                    return (
+                                                        <tr key={i} className="unread">
+                                                            <td>
+                                                                <h6 className="mb-1">{item.foodName}</h6>
+                                                                <p className="m-0">{item.foodName}</p>
+                                                            </td>
+                                                            <td>
+                                                                <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                            </td>
+                                                            <td><button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+
+                                            })
+                                            }
+                                        </tbody>
+                                    </Table>
                                 </Tab>
-                                <Tab eventKey="all" title="All">
-                                    {tabContent}
+                                <Tab eventKey="dinner" title="Dinner">
+                                    <Table responsive hover>
+                                        <tbody>
+                                            {this.state.foods.map((item, i) => {
+                                                if (item.foodCategory == "Dinner") {
+                                                    return (
+                                                        <tr key={i} className="unread">
+                                                            <td>
+                                                                <h6 className="mb-1">{item.foodName}</h6>
+                                                                <p className="m-0">{item.foodName}</p>
+                                                            </td>
+                                                            <td>
+                                                                <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                            </td>
+                                                            <td>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                }
+
+                                            })
+                                            }
+                                        </tbody>
+                                    </Table>
                                 </Tab>
                             </Tabs>
                         </Col>
+                        {this.state.editForm == true ? (
+                            <Col md={6} xl={4}>
+                                <Card>
+                                    <Card.Header>
+                                        <Card.Title as='h5'>Add New Food Item</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <div className="row align-items-center justify-content-center">
+                                            <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" value={this.state.foodCategory} readOnly />
+                                            <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
+                                            <Form.Control type="text" name="price" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.price} required />
 
+                                            <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Update</button>
+
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ) : (
+                                <Col></Col>
+                            )}
                     </Row>
                 </Col>
             </Row>

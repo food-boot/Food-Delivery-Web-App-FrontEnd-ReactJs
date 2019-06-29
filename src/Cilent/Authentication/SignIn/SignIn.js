@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
-
+import {config , baseURL} from "../../config"
 import axios from "axios";
 class SignUp extends React.Component {
     constructor() {
@@ -38,12 +38,21 @@ class SignUp extends React.Component {
             password: this.state.password,
             
         };
-        axios.post(`http://localhost:8080/users/login`, user)
+        axios.post(baseURL+"/users/login", user)
             .then(res => {
-                console.log(res);
-                console.log(res.data);
+                //console.log(res);
+                // alert(JSON.stringify(res.headers))
+                console.log(res.headers.Authorization);
+                
+                // console.log(res.headers);
+                // console.log(res.data);
+                localStorage.setItem('data', res.data.userId);
+                localStorage.setItem('type', res.data.userType);
                 if (res.status == 200) {
+                    console.log(res.headers);
                     localStorage.setItem('data', res.data.userId);
+                    localStorage.setItem('headers', res.headers);
+                    // localStorage.setItem('type', res.data.type);
                     this.props.history.push({
                         pathname: '/dashboard' 
                     });
@@ -56,9 +65,9 @@ class SignUp extends React.Component {
                 }
                 
             })
-            .catch(error => {
-                alert(error.response)
+            .catch(error => {                
                 console.log(error.response)
+                console.log(error)
                 if (error.response.status == 500) {
                     alert("User Already Exsists")
                     this.setState({ fireRedirect: true })
@@ -83,14 +92,14 @@ class SignUp extends React.Component {
                                 <i className="feather icon-unlock auth-icon" />
                             </div>
                             <h3 className="mb-4">Login</h3>
-                            <form onSubmit={this.onSubmit}>
+                            <form>
                                 <div className="input-group mb-3">
                                     <input type="email" name="email" className="form-control" placeholder="Email" onChange={this.onChange} required />
                                 </div>
                                 <div className="input-group mb-4">
                                     <input type="password" name="password" className="form-control" placeholder="password" onChange={this.onChange} required />
                                 </div>                                
-                                <button className="btn btn-primary shadow-2 mb-4">Login</button>
+                                <button onClick={this.onSubmit} className="btn btn-primary shadow-2 mb-4">Login</button>
                                 <p className="mb-0 text-muted">Don’t have an account? <NavLink to="/signUp">Signup</NavLink></p>
                             </form>
                         </div>

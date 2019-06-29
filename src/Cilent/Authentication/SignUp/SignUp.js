@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink , Redirect} from 'react-router-dom';
-
+import {config , baseURL} from "../../config"
 import '../../../assets/scss/style.scss';
 import axios from "axios";
 class SignUp extends React.Component {
@@ -42,15 +42,23 @@ class SignUp extends React.Component {
         };
      console.log(user);
 
-        axios.post(`http://localhost:8080/users`, user)
+        axios.post(baseURL+"/users", user)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
+                console.log(res.headers);
                 if (res.status == 200) {
                     localStorage.setItem('data', res.data.userId);
-                    this.props.history.push({
-                        pathname: '/dashboard' 
-                    });
+                    localStorage.setItem('type', res.data.userType);
+                    if(res.data.userType == "user"){
+                        this.props.history.push({
+                            pathname: '/cart' 
+                        });
+                    }else{
+                        this.props.history.push({
+                            pathname: '/dashboard' 
+                        });
+                    }    
                     
                 } else{
                     alert("fails")
