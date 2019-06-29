@@ -5,7 +5,7 @@ import EmptyCart from "../empty-states/EmptyCart";
 import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 import { findDOMNode } from "react-dom";
 import axios from "axios";
-import {config , baseURL} from "../../config"
+import { config, baseURL } from "../../config"
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -41,29 +41,28 @@ class Header extends Component {
     // var config = {
     //   headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
     // };
-    axios.post(baseURL+"/orders", order, config)
+    axios.post(baseURL + "/orders", order, config)
       .then(res => {
         console.log(res);
         console.log(res.data);
         if (res.status == 200) {
-          this.props.history.push({
-            pathname: '/cart'
-          });
+          window.location.reload()
 
         } else {
           alert("fails")
           this.setState({
             errors: res.data.status
           });
+          
         }
 
       })
       .catch(error => {
         // alert(error.response)
         console.log(error.response)
-        
+
       })
-      window.location.reload()
+    window.location.reload()
   }
   handleCart(e) {
     e.preventDefault();
@@ -118,6 +117,8 @@ class Header extends Component {
       true
     );
   }
+
+  
   render() {
     let cartItems;
     cartItems = this.state.cart.map(product => {
@@ -269,7 +270,9 @@ class Header extends Component {
                 </button>
               </div>
             </div>
+            
           </div>
+
         </div>
       </header>
     );

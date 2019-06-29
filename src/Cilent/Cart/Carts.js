@@ -6,7 +6,7 @@ import Products from "./components/Products";
 import Footer from "./components/Footer";
 import QuickView from "./components/QuickView";
 import "./scss/style.scss";
-import {config , baseURL} from "../config"
+import { config, baseURL } from "../config"
 
 class Carts extends Component {
   constructor() {
@@ -35,14 +35,15 @@ class Carts extends Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
   }
+
   // Fetch Initial Set of Products from external API
   getProducts() {
     //   var config = {
     //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
     // };
     let url =
-      baseURL+"/foods";
-    axios.get(url , config).then(response => {
+      baseURL + "/foods";
+    axios.get(url, config).then(response => {
       console.log(response.data)
       this.setState({
         products: response.data
@@ -87,7 +88,7 @@ class Carts extends Component {
       cartBounce: true
     });
     setTimeout(
-      function() {
+      function () {
         this.setState({
           cartBounce: false,
           quantity: 1
@@ -113,7 +114,7 @@ class Carts extends Component {
   }
   checkProduct(productID) {
     let cart = this.state.cart;
-    return cart.some(function(item) {
+    return cart.some(function (item) {
       return item.id === productID;
     });
   }
@@ -157,6 +158,15 @@ class Carts extends Component {
     });
   }
 
+  logout = () => {
+    this.props.history.push({
+      pathname: '/signIn'
+    });
+    localStorage.removeItem('data');
+    
+    
+  }
+
   render() {
     return (
       <div className="container">
@@ -172,7 +182,13 @@ class Carts extends Component {
           categoryTerm={this.state.category}
           updateQuantity={this.updateQuantity}
           productQuantity={this.state.moq}
+
         />
+        <button
+          type="submit"
+          style={{ marginLeft: 10, backgroundColor: 'red' }}
+          onClick={() => this.logout()}
+        >SignOut</button>
         <Products
           productsList={this.state.products}
           searchTerm={this.state.term}
