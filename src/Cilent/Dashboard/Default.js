@@ -22,21 +22,7 @@ class Dashboard extends React.Component {
         this.onDeleteO = this.onDeleteO.bind(this)
 
     }
-    componentDidMount = () => {        
-
-        // try {
-        //     var data = localStorage.getItem('data');
-        //     if (data == null) {
-        //         this.props.history.push('/signIn')
-        //     } else {
-        //         console.log(data)
-        //     }
-        // } catch{
-        //     this.props.history.push('/signIn')
-        // }
-        // var config = {
-        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        // };
+    componentDidMount = () => {
 
 
         axios.get(baseURL + "/foods", config)
@@ -132,7 +118,6 @@ class Dashboard extends React.Component {
                         oCount: oCount
                     })
 
-
                 } else {
                     alert("fails")
                     this.setState({
@@ -151,12 +136,7 @@ class Dashboard extends React.Component {
     }
 
     foodDele = (id) => {
-        // var config = {
-        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        // };
         var url = baseURL + "/foods/" + id;
-
-
         console.log(url)
         axios.delete(url, config)
             .then(res => {
@@ -182,11 +162,6 @@ class Dashboard extends React.Component {
     }
 
     foodEdit = (id) => {
-        // var config = {
-        //     headers: { 'Authorization': "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ3dmQuNTE0NjFAZ21haWwuY29tIiwiZXhwIjoxNTYyNDE5NzkyfQ.WOdt4392Ap7S1u3NnpxLO6MDC2gG20EAnDrpfX6TPqJV3HFck5fc9MTJN3ZRQJAlHumisC2rZ4pUId6Fen4pbg" }
-        // };
-
-
         axios.get(baseURL + "/foods/" + id, config)
             .then(res => {
                 console.log(res);
@@ -405,280 +380,283 @@ class Dashboard extends React.Component {
     render() {
         var self = this;
         return (
-            <Row className="justify-content-md-center">
-                {/* <Nav />              */}
-                <Col md={10} className="justify-content-md-center">
-                    <Row className="justify-content-md-center">
-                        <Col md={6} xl={4}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as='h5'>Users</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <div className="row d-flex align-items-center">
-                                        <div className="col-12">
-                                            <h3 className="align-items-center">{this.state.userCount}</h3>
-                                        </div>
-                                    </div>
+            <div >
+                <Nav />
+                <br /> <br />
+                <Row className="justify-content-md-center">
 
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={6} xl={4}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as='h5'>Ongonin Orders</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <div className="row d-flex align-items-center">
-                                        <div className="col-12">
-                                            <h3 className="align-items-center">{this.state.oCount}</h3>
-                                        </div>
-                                    </div>
-
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col xl={4}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as='h5'>Finished Orders</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <div className="row d-flex align-items-center">
-                                        <div className="col-12">
-                                            <h3 className="align-items-center">{this.state.fCount}</h3>
-                                        </div>
-                                    </div>
-
-                                </Card.Body>
-                            </Card>
-                        </Col>
-
-                        <Col md={12} xl={12}>
-                            <Tabs defaultActiveKey="new" id="uncontrolled-tab-example">
-                                <Tab eventKey="new" title="New Orders">
-                                    <Card className='Recent-Users'>
-                                        <Card.Header>
-                                            <Card.Title as='h5'>New Orders</Card.Title>
-                                        </Card.Header>
-                                        <Card.Body className='px-0 py-2'>
-
-                                            <Table responsive hover>
-                                                <tbody>
-                                                    {this.state.orders.map((item, i) => {
-
-                                                        if (item.status == false) {
-                                                            var self = this;
-                                                            return (
-                                                                <tr key={i} className="unread">
-                                                                    <td>
-                                                                        <h6 className="mb-1">{item.items}</h6>
-                                                                        <p className="m-0">{item.orderId}</p>
-                                                                    </td>
-                                                                    <td>
-                                                                        <h6 className="text-muted">
-                                                                            <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
-                                                                        </h6>
-                                                                    </td>
-                                                                    <td>
-                                                                        <button className="label theme-bg2 text-white f-12" onClick={() => this.onDeleteO(item.orderId)}>Reject</button>
-                                                                        <button className="label theme-bg text-white f-12" onClick={() => this.onApprove(item.orderId)}>Approve</button></td>
-                                                                </tr>
-                                                            )
-                                                        }
-
-                                                    })
-                                                    }
-
-
-                                                </tbody>
-                                            </Table>
-                                        </Card.Body>
-                                    </Card>
-                                </Tab>
-                                <Tab eventKey="past" title="Finished orders">
-                                    <Card className='Recent-Users'>
-                                        <Card.Header>
-                                            <Card.Title as='h5'>Finished Orders</Card.Title>
-                                        </Card.Header>
-                                        <Card.Body className='px-0 py-2'>
-
-                                            <Table responsive hover>
-                                                <tbody>
-                                                    {this.state.orders.map((item, i) => {
-                                                        if (item.status == true) {
-                                                            return (
-                                                                <tr key={i} className="unread">
-                                                                    <td>
-                                                                        <h6 className="mb-1">{item.items}  </h6>
-                                                                        <p className="m-0">{item.orderId}</p>
-                                                                    </td>
-                                                                    <td>
-                                                                        <h6 className="text-muted">
-                                                                            <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
-                                                                        </h6>
-                                                                    </td>
-                                                                    <td>
-                                                                        <button onClick={() => this.onDeleteO(item.orderId)} className="label theme-bg2 text-white f-12" >Delete</button>
-
-                                                                    </td>
-                                                                </tr>
-                                                            )
-                                                        }
-
-                                                    })
-                                                    }
-
-
-                                                </tbody>
-                                            </Table>
-                                        </Card.Body>
-                                    </Card>
-                                </Tab>
-
-                            </Tabs>
-                            <br /> <br /><br />
-                        </Col>
-                        <br /> <br /><br />
-                       
-                        <Col md={6} xl={4}>
-                            <Card>
-                                <Card.Header>
-                                    <Card.Title as='h5'>Add New Food Item</Card.Title>
-                                </Card.Header>
-                                <Card.Body>
-                                    <div className="row align-items-center justify-content-center">
-                                        <Form.Control size="lg" name="category" as="select" className="mb-3" onChange={this.onChange} required>
-                                            <option value="">Select Category</option>
-                                            <option value="Breakfast">Breakfast</option>
-                                            <option value="Lunch">Lunch</option>
-                                            <option value="Dinner">Dinner</option>
-                                        </Form.Control>
-                                        <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} required />
-                                        <Form.Control type="number" name="price" placeholder="Price" className="mb-3" onChange={this.onChange} required />
-                                        <button className="label theme-bg text-white f-12" name="category" onClick={() => this.onSubmit()}>Add</button>
-
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-
-                        <Col md={6} xl={8} className='m-b-30'>
-                            <Tabs defaultActiveKey="breakfast" id="uncontrolled-tab-example">
-                                <Tab eventKey="breakfast" title="Breakfast">
-                                    <Table responsive hover>
-                                        <tbody>
-                                            {this.state.foods.map((item, i) => {
-                                                if (item.foodCategory == "Breakfast") {
-                                                    return (
-                                                        <tr key={i} className="unread">
-                                                            <td>
-                                                                <h6 className="mb-1">{item.foodName}</h6>
-                                                                <p className="m-0">{item.foodName}</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <button className="label theme-bg text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
-
-                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                }
-
-                                            })
-                                            }
-
-                                        </tbody>
-                                    </Table>
-                                </Tab>
-                                <Tab eventKey="lunch" title="Lunch">
-                                    <Table responsive hover>
-                                        <tbody>
-                                            {this.state.foods.map((item, i) => {
-                                                if (item.foodCategory == "Lunch") {
-                                                    return (
-                                                        <tr key={i} className="unread">
-                                                            <td>
-                                                                <h6 className="mb-1">{item.foodName}</h6>
-                                                                <p className="m-0">{item.foodName}</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <button className="label theme-bg text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
-
-                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                }
-
-                                            })
-                                            }
-                                        </tbody>
-                                    </Table>
-                                </Tab>
-                                <Tab eventKey="dinner" title="Dinner">
-                                    <Table responsive hover>
-                                        <tbody>
-                                            {this.state.foods.map((item, i) => {
-                                                if (item.foodCategory == "Dinner") {
-                                                    return (
-                                                        <tr key={i} className="unread">
-                                                            <td>
-                                                                <h6 className="mb-1">{item.foodName}</h6>
-                                                                <p className="m-0">{item.foodName}</p>
-                                                            </td>
-                                                            <td>
-                                                                <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
-                                                            </td>
-                                                            <td>
-                                                                <button className="label theme-bg text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
-
-                                                                <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
-
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                }
-
-                                            })
-                                            }
-                                        </tbody>
-                                    </Table>
-                                </Tab>
-                            </Tabs>
-                        </Col>
-                        {this.state.editForm == true ? (
+                    <Col md={10} className="justify-content-md-center">
+                        <Row className="justify-content-md-center">
                             <Col md={6} xl={4}>
                                 <Card>
                                     <Card.Header>
-                                        <Card.Title as='h5'>Update {this.state.foodName}</Card.Title>
+                                        <Card.Title as='h5'>Users</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <div className="row d-flex align-items-center">
+                                            <div className="col-12">
+                                                <h3 className="align-items-center">{this.state.userCount}</h3>
+                                            </div>
+                                        </div>
+
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                            <Col md={6} xl={4}>
+                                <Card>
+                                    <Card.Header>
+                                        <Card.Title as='h5'>Ongonin Orders</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <div className="row d-flex align-items-center">
+                                            <div className="col-12">
+                                                <h3 className="align-items-center">{this.state.oCount}</h3>
+                                            </div>
+                                        </div>
+
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                            <Col xl={4}>
+                                <Card>
+                                    <Card.Header>
+                                        <Card.Title as='h5'>Finished Orders</Card.Title>
+                                    </Card.Header>
+                                    <Card.Body>
+                                        <div className="row d-flex align-items-center">
+                                            <div className="col-12">
+                                                <h3 className="align-items-center">{this.state.fCount}</h3>
+                                            </div>
+                                        </div>
+
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+
+                            <Col md={12} xl={12}>
+                                <Tabs defaultActiveKey="new" id="uncontrolled-tab-example">
+                                    <Tab eventKey="new" title="New Orders">
+                                        <Card className='Recent-Users'>
+                                            <Card.Header>
+                                                <Card.Title as='h5'>New Orders</Card.Title>
+                                            </Card.Header>
+                                            <Card.Body className='px-0 py-2'>
+
+                                                <Table responsive hover>
+                                                    <tbody>
+                                                        {this.state.orders.map((item, i) => {
+
+                                                            if (item.status == false) {
+                                                                var self = this;
+                                                                return (
+                                                                    <tr key={i} className="unread">
+                                                                        <td>
+                                                                            <h6 className="mb-1">{item.items}</h6>
+                                                                            <p className="m-0">{item.orderId}</p>
+                                                                        </td>
+                                                                        <td>
+                                                                            <h6 className="text-muted">
+                                                                                <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
+                                                                        </h6>
+                                                                        </td>
+                                                                        <td>
+                                                                            <button className="label theme-bg2 text-white f-12" onClick={() => this.onDeleteO(item.orderId)}>Reject</button>
+                                                                            <button className="label theme-bg text-white f-12" onClick={() => this.onApprove(item.orderId)}>Approve</button></td>
+                                                                    </tr>
+                                                                )
+                                                            }
+
+                                                        })
+                                                        }
+
+
+                                                    </tbody>
+                                                </Table>
+                                            </Card.Body>
+                                        </Card>
+                                    </Tab>
+                                    <Tab eventKey="past" title="Finished orders">
+                                        <Card className='Recent-Users'>
+                                            <Card.Header>
+                                                <Card.Title as='h5'>Finished Orders</Card.Title>
+                                            </Card.Header>
+                                            <Card.Body className='px-0 py-2'>
+
+                                                <Table responsive hover>
+                                                    <tbody>
+                                                        {this.state.orders.map((item, i) => {
+                                                            if (item.status == true) {
+                                                                return (
+                                                                    <tr key={i} className="unread">
+                                                                        <td>
+                                                                            <h6 className="mb-1">{item.items}  </h6>
+                                                                            <p className="m-0">{item.orderId}</p>
+                                                                        </td>
+                                                                        <td>
+                                                                            <h6 className="text-muted">
+                                                                                <i className="fa fa-circle text-c-green f-10 m-r-15" />LKR {item.cost}.00
+                                                                        </h6>
+                                                                        </td>
+                                                                        <td>
+                                                                            <button onClick={() => this.onDeleteO(item.orderId)} className="label theme-bg2 text-white f-12" >Delete</button>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            }
+
+                                                        })
+                                                        }
+
+
+                                                    </tbody>
+                                                </Table>
+                                            </Card.Body>
+                                        </Card>
+                                    </Tab>
+
+                                </Tabs>
+                                <br /> <br /><br />
+                            </Col>
+                            <br /> <br /><br />
+
+                            <Col md={6} xl={4}>
+                                <Card>
+                                    <Card.Header>
+                                        <Card.Title as='h5'>Add New Food Item</Card.Title>
                                     </Card.Header>
                                     <Card.Body>
                                         <div className="row align-items-center justify-content-center">
-                                            <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" value={this.state.foodCategory} readOnly />
-                                            <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
-                                            <Form.Control type="text" name="price" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.price} required />
-
-                                            <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Update</button>
+                                            <Form.Control size="lg" name="category" as="select" className="mb-3" onChange={this.onChange} required>
+                                                <option value="">Select Category</option>
+                                                <option value="Breakfast">Breakfast</option>
+                                                <option value="Lunch">Lunch</option>
+                                                <option value="Dinner">Dinner</option>
+                                            </Form.Control>
+                                            <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} required />
+                                            <Form.Control type="number" name="price" placeholder="Price" className="mb-3" onChange={this.onChange} required />
+                                            <button className="label theme-bg text-white f-12" name="category" onClick={() => this.onSubmit()}>Add</button>
 
                                         </div>
                                     </Card.Body>
                                 </Card>
                             </Col>
-                        ) : (
-                                <Col></Col>
-                            )}
-                    </Row>
-                </Col>
-            </Row>
 
+                            <Col md={6} xl={8} className='m-b-30'>
+                                <Tabs defaultActiveKey="breakfast" id="uncontrolled-tab-example">
+                                    <Tab eventKey="breakfast" title="Breakfast">
+                                        <Table responsive hover>
+                                            <tbody>
+                                                {this.state.foods.map((item, i) => {
+                                                    if (item.foodCategory == "Breakfast") {
+                                                        return (
+                                                            <tr key={i} className="unread">
+                                                                <td>
+                                                                    <h6 className="mb-1">{item.foodName}</h6>
+                                                                    <p className="m-0">{item.foodName}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                                </td>
+                                                                <td>
+                                                                    <button className="label theme-bg text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+
+                                                                    <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
+
+                                                })
+                                                }
+
+                                            </tbody>
+                                        </Table>
+                                    </Tab>
+                                    <Tab eventKey="lunch" title="Lunch">
+                                        <Table responsive hover>
+                                            <tbody>
+                                                {this.state.foods.map((item, i) => {
+                                                    if (item.foodCategory == "Lunch") {
+                                                        return (
+                                                            <tr key={i} className="unread">
+                                                                <td>
+                                                                    <h6 className="mb-1">{item.foodName}</h6>
+                                                                    <p className="m-0">{item.foodName}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                                </td>
+                                                                <td>
+                                                                    <button className="label theme-bg text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+
+                                                                    <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
+
+                                                })
+                                                }
+                                            </tbody>
+                                        </Table>
+                                    </Tab>
+                                    <Tab eventKey="dinner" title="Dinner">
+                                        <Table responsive hover>
+                                            <tbody>
+                                                {this.state.foods.map((item, i) => {
+                                                    if (item.foodCategory == "Dinner") {
+                                                        return (
+                                                            <tr key={i} className="unread">
+                                                                <td>
+                                                                    <h6 className="mb-1">{item.foodName}</h6>
+                                                                    <p className="m-0">{item.foodName}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <h6 className="text-muted"><i className="fa fa-circle text-c-green f-10 m-r-15" />{item.foodPrice}</h6>
+                                                                </td>
+                                                                <td>
+                                                                    <button className="label theme-bg text-white f-12" onClick={() => this.foodEdit(item.foodId)}>Edit</button>
+
+                                                                    <button className="label theme-bg2 text-white f-12" onClick={() => this.foodDele(item.foodId)}>Delete</button>
+
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    }
+
+                                                })
+                                                }
+                                            </tbody>
+                                        </Table>
+                                    </Tab>
+                                </Tabs>
+                            </Col>
+                            {this.state.editForm == true ? (
+                                <Col md={6} xl={4}>
+                                    <Card>
+                                        <Card.Header>
+                                            <Card.Title as='h5'>Update {this.state.foodName}</Card.Title>
+                                        </Card.Header>
+                                        <Card.Body>
+                                            <div className="row align-items-center justify-content-center">
+                                                <Form.Control type="text" name="category" placeholder="Food Name" className="mb-3" value={this.state.foodCategory} readOnly />
+                                                <Form.Control type="text" name="foodName" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.foodName} required />
+                                                <Form.Control type="text" name="price" placeholder="Food Name" className="mb-3" onChange={this.onChange} value={this.state.price} required />
+
+                                                <button className="label theme-bg text-white f-12" name="category" onClick={() => this.updateFood()}>Update</button>
+
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            ) : (
+                                    <Col></Col>
+                                )}
+                        </Row>
+                    </Col>
+                </Row>
+            </div>
         );
     }
 }
