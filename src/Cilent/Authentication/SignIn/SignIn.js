@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, Redirect } from 'react-router-dom';
+import { NavLink, Navigate } from 'react-router-dom';
 
 import '../../../assets/scss/style.scss';
 import { config, baseURL } from "../../config"
@@ -134,7 +134,7 @@ class SignUp extends React.Component {
             );
         } else {
             return (
-                <Redirect to="/dashboard" />
+                <Navigate to="/dashboard" />
             )
         }
 
